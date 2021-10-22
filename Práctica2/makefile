@@ -1,4 +1,4 @@
-CXX = g++ -w -std=c++11
+CXX = gcc -w 
 INC=-I tabla.h
 
 all: pract2
