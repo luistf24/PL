@@ -62,7 +62,7 @@ ID                 return ID;
 [\n]                 linea_actual++;
 [/t]+               return -1;
 otros              {
-                     printf("Error léxico: token yytext en linea linea_actual \n", yytext, linea_actual);
+                     printf("Error léxico: token %c en linea %c \n", yytext, linea_actual);
                    }
 %%
 main (int argc, char *argv[])
@@ -86,7 +86,7 @@ main (int argc, char *argv[])
          val = yylex();
          if(val != -1)
            /* cout << "Linea " << linea_actual << ": " << val << endl;*/
-            printf("Linea linea_actual : val", linea_actual, val);
+            printf(" Linea %d : %d \n", linea_actual, val);
       }
    }
    
