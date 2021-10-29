@@ -77,6 +77,15 @@ void imprimirToken(int val)
       case 280:
          printf("SALIDA");
          break;
+      case 282:
+         printf("MARCA_FIN_VAR");
+         break;
+      case 283:
+         printf("NATURAL");
+         break;
+      case 284:
+         printf("BOOLEANO");
+         break;
       default:
          printf("CADENA");
    }

@@ -18,6 +18,6 @@ Principal Princi?pal
 	mientras (valor > 0)
 		contador = contador - 1;
 
-	bool semaforo [5];
+	booleano semaforo [5];
 
 }

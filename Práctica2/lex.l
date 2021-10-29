@@ -11,8 +11,9 @@ int ERROR = -2;
 %}
    /*----- Sección de Alias --------------*/
 
-CONSTANTE            ([0-9]+[0-9]*)|([0-9]+\.[0-9]+)
-ID                   ([a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|\_)*
+CONSTANTE            ([0-9]+\.[0-9]+)
+NATURAL              ([0-9]+[0-9]*)
+ID                   ([a-z]|[A-Z])([a-z]|[A-Z]|\_)*
 CADENA	 		      \"[^\"]+\"
 otros			.
 
@@ -51,14 +52,18 @@ otros			.
 "+"                  return OP_BINARIO;
 "-"                  return OP_BINARIO;
 "!"                  return OP_UNARIO;
+"verdadero"          return BOOLEANO;
+"falso"              return BOOLEANO;
 "procedimiento"      return PROCEDIMIENTO;
 "int"                return TIPO;
 "double"             return TIPO;
 "char"               return TIPO;
-"bool"               return TIPO;
+"booleano"           return TIPO;
 "var"                return MARCA_INICIO_VAR;
+"endvar"             return MARCA_FIN_VAR;
 "Entrada"            return ENTRADA;
 "Salida"             return SALIDA;
+{NATURAL}            return NATURAL;
 {CONSTANTE}          return CONSTANTE;
 {CADENA}             return CADENA;
 {ID}                 return ID;

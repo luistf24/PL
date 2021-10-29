@@ -23,3 +23,6 @@
 #define ENTRADA  279;
 #define SALIDA  280;
 #define	CADENA  281;
+#define MARCA_FIN_VAR 282;
+#define NATURAL 283;
+#define BOOLEANO 284;
