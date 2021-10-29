@@ -83,10 +83,10 @@ void imprimirToken(int val)
       case 283:
          printf("NATURAL");
          break;
-      case 284:
-         printf("BOOLEANO");
+     case 284:
+         printf("MASMENOS");
          break;
-      default:
+     default:
          printf("CADENA");
    }
 }

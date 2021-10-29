@@ -25,4 +25,4 @@
 #define	CADENA  281;
 #define MARCA_FIN_VAR 282;
 #define NATURAL 283;
-#define BOOLEANO 284;
+#define MASMENOS 284;

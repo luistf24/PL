@@ -49,11 +49,11 @@ otros			.
 "&&"                 return OP_BINARIO;
 "||"                 return OP_BINARIO;
 "^"                  return OP_BINARIO;
-"+"                  return OP_BINARIO;
-"-"                  return OP_BINARIO;
+"+"                  return MASMENOS;
+"-"                  return MASMENOS;
 "!"                  return OP_UNARIO;
-"verdadero"          return BOOLEANO;
-"falso"              return BOOLEANO;
+"verdadero"          return CONSTANTE;
+"falso"              return CONSTANTE;
 "procedimiento"      return PROCEDIMIENTO;
 "int"                return TIPO;
 "double"             return TIPO;
