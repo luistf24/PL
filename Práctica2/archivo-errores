@@ -3,11 +3,21 @@ Principal Princi?pal
     var
     	int limb_O = 0;
 	
-	procedimiento YTAL(int i, int manin)	
+	procedimiento YTAL(int i, int manin);	
+	
 	56.85
 	56
 	ALOMEJOR
 	\\\\\r
-	Salida "Vas loquito"
+	
+	[1, 4, 3, 23, 6]
+	
+	si (numero < 20)
+		Salida "";
+
+	mientras (valor > 0)
+		contador = contador - 1;
+
+	bool semaforo [5];
 
 }
