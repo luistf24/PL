@@ -1,9 +1,9 @@
 Principal Princi?pal
 {
     var
-    	int limb_O = 0;
+    	in·t limb_O = 0;
 	
-	procedimiento YTAL(int i, int manin);	
+	procedi··miento YTAL(int i, int manin);	
 	
 	56.85
 	56
