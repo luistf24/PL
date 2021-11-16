@@ -20,7 +20,7 @@ otros			.
 ","                  return COMA;
 "("                  return PARENT_IZQ;
 ")"                  return PARENT_DER;
-"["                  return CORCHERTE_IZQ;
+"["                  return CORCHETE_IZQ;
 "]"                  return CORCHETE_DER;
 "si"                 return SI;
 "sino"               return SINO;

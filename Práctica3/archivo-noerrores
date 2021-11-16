@@ -1,0 +1,24 @@
+Principal 
+{
+    var
+    	int limb_O = 0;
+	
+    endvar
+	procedimiento YTAL(int i, int manin);	
+	
+	56.85
+	56
+	ALOMEJOR
+	\\\\\r
+	
+	[1, 4, 3, 23, 6]
+	
+	si (numero < 20)
+		Salida "";
+
+	mientras (valor > 0)
+		contador = contador - 1;
+
+	booleano semaforo [5];
+
+}

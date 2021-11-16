@@ -13,7 +13,7 @@ int error_sintactico = 0 ;
 //int objeto = 1;
 %}
 
-%define parse.error verbose
+//%define parse.error verbose
 
 /** A continuación declaramos los tokens/símbolos terminales de la gramática.   **/
 %token MARCA_INICIO_VAR
@@ -26,7 +26,7 @@ int error_sintactico = 0 ;
 %token TIPO
 %token LISTA
 %token PROCEDIMIENTO
-%token OP_ASIGNACION
+%token OP_ASIG
 %token SI
 %token SINO 
 %token MIENTRAS 
@@ -40,6 +40,13 @@ int error_sintactico = 0 ;
 %token ENTRADA 
 %token SALIDA 
 %token NATURAL 
+%token CORCHETE_IZQ
+%token CORCHETE_DER
+%token MASMENOS
+%token PYC
+%token agregado1d
+%token agregado2d
+
 
 
 %left   OPMATRICES
@@ -104,8 +111,8 @@ Sentencia 			    :   bloque
 						| 	sentencia_salida
 						| 	llamada_proced 	;
 
-sentencia_asignacion	:   Ide_exp OP_ASIGNACION expresion PYC
-					 	| 	Ide_exp OP_ASIGNACION Array_exp PYC 	;
+sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC
+					 	| 	Ide_exp OP_ASIG Array_exp PYC 	;
 
 Ide_exp 				: ID | Array_exp 	;
 
@@ -123,7 +130,7 @@ sentencia_si			:   SI PARENT_IZQ expresion PARENT_DER
 sentencia_mientras		    :   MIENTRAS PARENT_IZQ expresion PARENT_DER
                             Sentencia   ;
 
-sentencia_hacer			:   HACER Sentencia HASTA PARENTESIS_IZQ expresion PARENT_DER PYC 	;
+sentencia_hacer			:   HACER Sentencia HASTA PARENT_IZQ expresion PARENT_DER PYC 	;
 
 sentencia_entrada 		: 	ENTRADA Identificadores 	;
 
@@ -181,6 +188,6 @@ Booleano				:   "verdadero" | "falso"   ;
 void yyerror(const char* msg )
 {
     error_sintactico ++;
-	fprintf(stderr,"[Linea %d] Error numero %i: %s\n", yylineno, error_sintactico, msg);
+	fprintf(stderr,"[Linea %d] Error numero %i: %s\n", yyleng, error_sintactico, msg);
 }
 
