@@ -1,19 +1,13 @@
 /*----- Sección de Declaraciones --------------*/
 %{
-
-#include <stdio.h>
-#include "tabla.h"
-#include "funcion.c"
-
-int linea_actual = 1;
-int ERROR = -2;
-
 %}
-   /*----- Sección de Alias --------------*/
 
-CONSTANTE            ([0-9]+\.[0-9]+)
+%option noyywrap
+   /*----- Sección de Alias --------------*/
+REAL                 ([0-9]+\.[0-9]+)
 NATURAL              ([0-9]+[0-9]*)
-ID                   ([a-z]|[A-Z])([a-z]|[A-Z]|\_)*
+ID                   ([a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|\_)*
+CARACTER             \'[^\"]\'
 CADENA	 		      \"[^\"]+\"
 otros			.
 
@@ -27,7 +21,7 @@ otros			.
 ","                  return COMA;
 "("                  return PARENT_IZQ;
 ")"                  return PARENT_DER;
-"["                  return CORCHERTE_IZQ;
+"["                  return CORCHETE_IZQ;
 "]"                  return CORCHETE_DER;
 "si"                 return SI;
 "sino"               return SINO;
@@ -35,12 +29,12 @@ otros			.
 "hacer"              return HACER;
 "hasta"              return HASTA;
 "="                  return OP_ASIG;
+"**"                 return OPMATRICES;
 "*"                  return OP_BINARIO;
 "/"                  return OP_BINARIO;
 "@"                  return OP_BINARIO;
 "--"                 return OP_BINARIO;
 "%"                  return OP_BINARIO;
-"**"                 return OP_BINARIO;
 "<"                  return OP_BINARIO;
 ">"                  return OP_BINARIO;
 "=="                 return OP_BINARIO;
@@ -52,57 +46,27 @@ otros			.
 "+"                  return MASMENOS;
 "-"                  return MASMENOS;
 "!"                  return OP_UNARIO;
-"verdadero"          return CONSTANTE;
-"falso"              return CONSTANTE;
 "procedimiento"      return PROCEDIMIENTO;
 "int"                return TIPO;
 "double"             return TIPO;
 "char"               return TIPO;
-"booleano"           return TIPO;
+"bool"               return TIPO;
 "var"                return MARCA_INICIO_VAR;
 "endvar"             return MARCA_FIN_VAR;
 "Entrada"            return ENTRADA;
 "Salida"             return SALIDA;
 {NATURAL}            return NATURAL;
-{CONSTANTE}          return CONSTANTE;
+{REAL}               return CONSTANTE;
+{CARACTER}           return CONSTANTE;
+"verdadero"          return CONSTANTE;
+"falso"              return CONSTANTE;
 {CADENA}             return CADENA;
 {ID}                 return ID;
 [\n]                 linea_actual++;
 [ \t]+               ;
-{otros}             return ERROR;
-%%
-main (int argc, char *argv[])
-{
-   if (argc >= 2)
-   {
-      yyin = fopen (argv[1], "rt");
-      int val;
-
-      if (yyin == NULL)
-      {
-         printf ("El fichero %s no se puede abrir\n", argv[1]);
-         exit (-1);
-      }
-      
-      else
-         printf("<Linea N> <Token> → <Lexema>\n");
-      
-      val = 1;
-      while (val != 0)
-      {
-         val = yylex();
-         if(val > 0)
-         {
-            printf(" Linea %d: ", linea_actual); 
-            imprimirToken(val);
-            printf(" → %s\n", yytext);
-         }
-         
-         else if (val == ERROR)
-            printf(" Linea %d: [Error léxico] → %s\n", 
-            linea_actual, yytext); 
-      }
-   }
-   
-   return 0;
+{otros}  {
+   error_lexico++;
+   printf("Error léxico %i: token %s en linea %i.\n", error_lexico, yytext, linea_actual);
 }
+%%
+

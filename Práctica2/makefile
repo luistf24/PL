@@ -1,13 +1,22 @@
-CXX = gcc -w
-INC=-I tabla.h
 
-all: pract2
+sintactico: main.o y.tab.o
+	gcc -o sintactico main.o y.tab.o
+
+y.tab.o: y.tab.c
+	gcc -c y.tab.c
+
+main.o:
+	gcc -c main.c
+
+y.tab.c: as.y lex.yy.c
+	bison -v -o y.tab.c as.y
 
 lex.yy.c: lex.l
-	@flex -l lex.l
+	flex lex.l
 
-pract2:	lex.yy.c
-	@$(CXX) $(INC) $^ -o $@ -lfl
+clean:
+	rm -f sintactico main.o y.tab.o y.tab.c lex.yy.c y.output
+todo:
+	make clean
+	make sintactico
 
-clean: 
-	rm lex.yy.c pract2
