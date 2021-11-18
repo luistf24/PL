@@ -1,23 +1,46 @@
-Principal Princi?pal
+Principal
 {
-    var
-    	in·t limb_O = 0;
-	
-	procedi··miento YTAL(int i, int manin);	
-	
-	56.85
-	56
-	ALOMEJOR
-	\\\\\r
-	
-	[1, 4, 3, 23, 6]
-	
-	si (numero < 20)
-		Salida "";
+    procedimiento A(int a, char B)
+    {
+    	var
+    		int x y, z
+    		double b s;
+    		char c;
+    		bool d;
 
-	mientras (valor > 0)
-		contador = contador - 1;
+    		int a[SIZE*2];
+    		double b[SIZE**1, 10];
+    		char c[2,2<2];
+    		bool d[z];
+    	endvar
 
-	booleano semaforo [5];
+    	procedimiento B()
+    	{
+    		procedimiento C()
+    		{
+    			x = 10;
 
+    			si ((x > 10) && y <= 4)
+    			{
+    				A();
+    				y = {1, 2, 4};
+    			}
+    			
+    			sino
+    				y = y + 2;
+    		}
+
+    		C();
+    	}
+    }
+
+    procedimiento D()
+    {
+    	procedimiento E()
+    	{
+
+    	}
+    }
+
+    A();
 }
