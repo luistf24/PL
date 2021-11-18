@@ -1,12 +1,15 @@
 /*----- Sección de Declaraciones --------------*/
 %{
+#define MAXLONGBUFFER 200
+char buffer[MAXLONGBUFFER];
 %}
 
 %option noyywrap
    /*----- Sección de Alias --------------*/
-CONSTANTE            ([0-9]+\.[0-9]+)
+REAL                 ([0-9]+\.[0-9]+)
 NATURAL              ([0-9]+[0-9]*)
-ID                   ([a-z]|[A-Z])([a-z]|[A-Z]|\_)*
+ID                   ([a-z]|[A-Z])([a-z]|[A-Z]|[0-9]|\_)*
+CARACTER             \'[^\"]\'
 CADENA	 		      \"[^\"]+\"
 otros			.
 
@@ -28,13 +31,13 @@ otros			.
 "hacer"              return HACER;
 "hasta"              return HASTA;
 "="                  return OP_ASIG;
+"**"                 return OPMATRICES;
 "*"                  return OP_BINARIO;
 "/"                  return OP_BINARIO;
 "@"                  return OP_BINARIO;
 "--"                 return OP_BINARIO;
 "%"                  return OP_BINARIO;
-"**"                 return OP_BINARIO;
-"<"                  return OPMATRICES;
+"<"                  return OP_BINARIO;
 ">"                  return OP_BINARIO;
 "=="                 return OP_BINARIO;
 ">="                 return OP_BINARIO;
@@ -45,25 +48,28 @@ otros			.
 "+"                  return MASMENOS;
 "-"                  return MASMENOS;
 "!"                  return OP_UNARIO;
-"verdadero"          return CONSTANTE;
-"falso"              return CONSTANTE;
 "procedimiento"      return PROCEDIMIENTO;
 "int"                return TIPO;
 "double"             return TIPO;
 "char"               return TIPO;
-"booleano"           return TIPO;
+"bool"               return TIPO;
 "var"                return MARCA_INICIO_VAR;
 "endvar"             return MARCA_FIN_VAR;
 "Entrada"            return ENTRADA;
 "Salida"             return SALIDA;
 {NATURAL}            return NATURAL;
-{CONSTANTE}          return CONSTANTE;
+{REAL}               return CONSTANTE;
+{CARACTER}           return CONSTANTE;
+"verdadero"          return CONSTANTE;
+"falso"              return CONSTANTE;
 {CADENA}             return CADENA;
 {ID}                 return ID;
 [\n]                 linea_actual++;
 [ \t]+               ;
-{otros}              {  error_lexico++;
-                        printf("Error léxico %i: token %s en linea %i.\n", error_lexico, yytext, linea_actual);
-                     }
+.                  {
+   error_lexico++;
+   snprintf(buffer, MAXLONGBUFFER,"Error léxico %i: token %s en linea %i.\n", error_lexico, yytext, linea_actual);
+   yyerror(buffer);
+}
 %%
 
