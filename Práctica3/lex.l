@@ -68,7 +68,7 @@ otros			.
 [ \t]+               ;
 .                  {
    error_lexico++;
-   snprintf(buffer, MAXLONGBUFFER,"Error léxico %i: token %s en linea %i.\n", error_lexico, yytext, linea_actual);
+   snprintf(buffer, MAXLONGBUFFER,"Error léxico %i: token %s en linea %i", error_lexico, yytext, linea_actual);
    yyerror(buffer);
 }
 %%

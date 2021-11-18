@@ -54,7 +54,9 @@ int error_sintactico = 0 ;
 %%
 /** Sección de producciones de la gramática.    **/
 
-Principal             	:   PRINCIPAL bloque 	;
+Principal             	:   PRINCIPAL bloque 
+					   	| error{yyerrok;yyclearin;};
+
 
 bloque 					:   INICIO_BLOQUE
 							Declar_de_var_locales
@@ -65,19 +67,22 @@ bloque 					:   INICIO_BLOQUE
 							Declar_de_var_locales
 							Declar_de_subprogs
 							Sentencias
-							FIN_BLOQUE ;
+							FIN_BLOQUE 
+						| error{yyclearin;};
+
 
 Declar_de_var_locales   :   MARCA_INICIO_VAR Variables_locales 
 							MARCA_FIN_VAR
                         |   ;
 
 Variables_locales 	    :   Variables_locales Cuerpo_declar_var
-						| 	Cuerpo_declar_var 	
-						|   error{yyerrok;yyclearin;}   ;
+						| 	Cuerpo_declar_var ;	
 
 
 Cuerpo_declar_var       :   TIPO Identificadores PYC
-						| 	TIPO Arrays PYC		;
+						| 	TIPO Arrays PYC		
+						| error{yyerrok;yyclearin;};
+
 
 Arrays 					: 	Arrays COMA Array
 						| 	Array 	;
@@ -92,6 +97,7 @@ Identificadores		    :   Identificadores COMA ID
 
 Declar_de_subprogs 	    :   Declar_de_subprogs Declar_subprog   
 						|	;
+
 
 Declar_subprog          : 	PROCEDIMIENTO ID
                             PARENT_IZQ Parametros PARENT_DER 
@@ -147,8 +153,7 @@ lista_exp_cadena 		: 	lista_exp_cadena COMA exp_cadena
 exp_cadena 				: 	expresion | CADENA 	;
 
 llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC
-						|	ID PARENT_IZQ PARENT_DER PYC
-						|   error{yyerrok;yyclearin;}   ;
+						|	ID PARENT_IZQ PARENT_DER PYC;
 
 argumentos              :   argumentos COMA expresion
                         |   expresion 	
@@ -168,7 +173,8 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 Agregados 				:	INICIO_BLOQUE argumentos FIN_BLOQUE	;
 						|	INICIO_BLOQUE 
 							argumentos PYC argumentos
-							CORCHETE_DER ;
+							CORCHETE_DER ;	
+
 
 
 Constante				:   CONSTANTE | NATURAL		;
