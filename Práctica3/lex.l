@@ -26,28 +26,27 @@ otros			.
 "["                  return CORCHETE_IZQ;
 "]"                  return CORCHETE_DER;
 "si"                 return SI;
+"entonces"           return ENTONCES;
 "sino"               return SINO;
 "mientras"           return MIENTRAS;
 "hacer"              return HACER;
 "hasta"              return HASTA;
 "="                  return OP_ASIG;
-"**"                 return OPMATRICES;
-"*"                  return OP_BINARIO;
-"/"                  return OP_BINARIO;
-"@"                  return OP_BINARIO;
-"--"                 return OP_BINARIO;
-"%"                  return OP_BINARIO;
-"<"                  return OP_BINARIO;
-">"                  return OP_BINARIO;
-"=="                 return OP_BINARIO;
-">="                 return OP_BINARIO;
-"<="                 return OP_BINARIO;
-"&&"                 return OP_BINARIO;
-"||"                 return OP_BINARIO;
-"^"                  return OP_BINARIO;
+"**"                 return OP_MULT;
+"*"                  return OP_MULT;
+"/"                  return OP_MULT;
+"<"                  return OP_REL;
+">"                  return OP_REL;
+">="                 return OP_REL;
+"<="                 return OP_REL;
+"=="                 return OP_IGUALDAD;
+"!="                 return OP_IGUALDAD;
+"&&"                 return OP_AND;
+"||"                 return OP_OR;
+"!"                  return OP_NOT;
+"xor"                return OP_XOR;
 "+"                  return MASMENOS;
 "-"                  return MASMENOS;
-"!"                  return OP_UNARIO;
 "procedimiento"      return PROCEDIMIENTO;
 "int"                return TIPO;
 "double"             return TIPO;
@@ -65,10 +64,10 @@ otros			.
 {CADENA}             return CADENA;
 {ID}                 return ID;
 [\n]                 linea_actual++;
-[ \t]+               ;
+[ \t]               ;
 .                  {
    error_lexico++;
-   snprintf(buffer, MAXLONGBUFFER,"Error léxico %i: token %s en linea %i", error_lexico, yytext, linea_actual);
+   snprintf(buffer, MAXLONGBUFFER,"Error léxico %i: token %s en linea %i.\n", error_lexico, yytext, linea_actual);
    yyerror(buffer);
 }
 %%
