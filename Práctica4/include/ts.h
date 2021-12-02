@@ -31,7 +31,8 @@ typedef struct
 
 int TS_Inserta(entradaTS elem){
 	TOPE+=1;
-	TS[MAX_TS]=elem;
+	TS[TOPE]=elem;
+	imprimir_tabla();
 }
 
 int TS_VaciarEntrada(){
@@ -43,6 +44,7 @@ int TS_VaciarBloque(){
 	while(!comprobar_Entrada(marca))
 		TS_VaciarEntrada();
 	return TOPE;
+	imprimir_tabla();
 }
 
 bool comprobar_Entrada(tipoEntrada tipo){
@@ -62,4 +64,16 @@ bool buscar_repetido(tipoEntrada tipo, char *nom){
 	}
 	TOPE=tope_orig;
 	return encontrado;
+}
+
+
+void imprimir_tabla(){
+	printf("%-5s%-20s%-25s%-20s%-10s%-5%-5%-5\n", "Num", "TipoEnt", "Nombre", "TipoDato", "Parametros", "Dimension", "Tam1", "Tam2");
+	for(int i=0; i<TOPE,i++)
+		printf("%-5s%-20s%-25s%-20s%-10s%-5%-5%-5\n", i, TS[i].entrada, TS[i].*nombre, TS[i].tipoDato, TS[i].parametros, TS[i].dimensiones, TS[i].TamDimen1, TS[i].TamDimen2)
+	printf("\n");
+	printf("\n");
+	printf("-------------------------------------------------------------------------------------------------------");
+	printf("\n");
+	printf("\n");
 }
