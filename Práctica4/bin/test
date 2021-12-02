@@ -1,0 +1,51 @@
+Principal
+{
+    procedimiento A(int a, double B, bool c[][])
+    {
+    	var
+    		int x y, z
+    		double x, y z, a;
+    		char c, c[2];
+    		bo··ol d;
+
+    		int a[SIZE*2];
+    		double b[SIZE**1, 10];
+    		char c[2,2<2];
+    		bool d[z];
+    	endvar
+
+    	procedimiento B(int a, int b c)
+    	{
+            
+    		procedimiento C()
+    		{
+    			x = 10;
+
+    			si ((x > 10 && y <= 4)+) entonces
+    			{
+    				A();
+    				y = {1, 2, 5, 4}(;
+    			}
+    			
+    			sino
+    				si ((x + 10) > y + 4) entonces
+                        y = y + 2;
+    		}
+
+    		C();
+    	}
+    }
+
+    procedimiento D()
+    {
+    	procedimiento E()
+    	{
+            Salida "Resultado : ", 10;
+
+            si(vector[vector[0]] == 100) entonces
+            {
+                vector[y] = 6;
+            } sino { x = 0; }
+    	}
+    }
+}

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <ts.h>
+#include "include/ts.h"
 
 void yyerror(const char* msg);
 int yylex();
@@ -60,8 +60,10 @@ int error_sintactico = 0 ;
 Principal             	:   PRINCIPAL bloque 	;
 
 bloque 					:   INICIO_BLOQUE {
-								entradaTS  marca;
-								marca.entrada=marca; 
+								tipoEntrada a=marca;
+								dtipo b = desconocido;
+								entradaTS marca = {.entrada=a, .nombre="", .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
+								
 								TS_Inserta(marca);
 								} Declar_de_var_locales	Declar_de_subprogs FIN_BLOQUE    
 
