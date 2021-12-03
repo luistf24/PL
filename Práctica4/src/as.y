@@ -28,15 +28,15 @@ int error_sintactico = 0 ;
 %token OP_ASIG
 %token SI
 %token ENTONCES
-%token SINO 
-%token MIENTRAS 
+%token SINO
+%token MIENTRAS
 %token HACER
 %token HASTA
 %token CONSTANTE
-%token NATURAL 
-%token CADENA 
-%token ENTRADA 
-%token SALIDA 
+%token NATURAL
+%token CADENA
+%token ENTRADA
+%token SALIDA
 %token PYC
 %token PARENT_IZQ
 %token PARENT_DER
@@ -52,7 +52,7 @@ int error_sintactico = 0 ;
 %left	OP_MULT
 %right  OP_NOT
 
-%start Principal 
+%start Principal
 
 %%
 /** Sección de producciones de la gramática.    **/
@@ -62,12 +62,20 @@ Principal             	:   PRINCIPAL bloque 	;
 bloque 					:   INICIO_BLOQUE {
 								tipoEntrada a=marca;
 								dtipo b = desconocido;
-								entradaTS marca = {.entrada=a, .nombre="", .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
-								
-								TS_Inserta(marca);
-								} Declar_de_var_locales	Declar_de_subprogs FIN_BLOQUE    
+								entradaTS marca = {.entrada=a, .nombre="marca", .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
 
-						| 	INICIO_BLOQUE Declar_de_var_locales Declar_de_subprogs Sentencias FIN_BLOQUE ;
+								TS_Inserta(marca);
+								} Declar_de_var_locales	Declar_de_subprogs FIN_BLOQUE { TS_VaciarBloque();}
+
+						| 	INICIO_BLOQUE {
+														tipoEntrada a=marca;
+														dtipo b = desconocido;
+														entradaTS marca = {.entrada=a, .nombre="marca", .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
+
+														TS_Inserta(marca);
+														}
+
+						Declar_de_var_locales Declar_de_subprogs Sentencias FIN_BLOQUE { TS_VaciarBloque();} ;
 
 Declar_de_var_locales   :   MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR
                         |   ;
@@ -75,7 +83,7 @@ Declar_de_var_locales   :   MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR
 Variables_locales 	    :   Variables_locales Cuerpo_declar_var
 						| 	Cuerpo_declar_var 	;
 
-Cuerpo_declar_var       :   tipo linea_variables PYC 
+Cuerpo_declar_var       :   tipo linea_variables PYC
 						|	tipo linea_variables error 	;
 
 // Definido para no confundir con <Parametro>
@@ -86,24 +94,31 @@ linea_variables			:	linea_variables COMA variable
 
 variable 				:	ID | Array ;
 
-Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER	
+Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER
 						|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER;
 
-Identificadores		    :   Identificadores COMA ID 
-                        |   ID 	
+Identificadores		    :   Identificadores COMA ID
+                        |   ID
                         | 	error ;
 
-Declar_de_subprogs 	    :   Declar_de_subprogs Declar_subprog   
+Declar_de_subprogs 	    :   Declar_de_subprogs Declar_subprog
 						|	;
 
-Declar_subprog          : 	PROCEDIMIENTO ID PARENT_IZQ Parametros PARENT_DER bloque 	;
+Declar_subprog          : 	PROCEDIMIENTO ID {
+tipoEntrada a=procedimiento;
+dtipo b = no_asignado;
+														entradaTS procedimiento = {.entrada=a, .nombre=$ID.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
+														TS_Inserta(procedimiento);
 
-Parametros			    :   Parametros COMA Parametro   
-                        |   Parametro
-                        |	;
+
+} PARENT_IZQ Parametros  {TS[TOPE].parametros = $Parametros.param;} PARENT_DER bloque 	;
+
+Parametros			    :   Parametros COMA Parametro // {$$Parametros.param+=2;} No se que pasa aqui
+                        |  Parametro  {$Parametros.param=1+$Parametros.param;}
+                        |	{$Parametros.param=0;};
 
 Parametro				:   TIPO ID
-						|	TIPO ID CORCHETE_IZQ CORCHETE_DER	
+						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
 						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
 									CORCHETE_IZQ CORCHETE_DER;
 						|	error	;
@@ -125,7 +140,7 @@ sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC ;
 Ide_exp 				:	ID | Array_exp 	;
 
 
-Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER 
+Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
 			  			|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER 	;
 
 sentencia_si			:   si
@@ -141,7 +156,7 @@ sentencia_entrada 		: 	ENTRADA Identificadores PYC	;
 
 sentencia_salida 		: 	SALIDA lista_exp_cadena PYC	;
 
-lista_exp_cadena 		: 	lista_exp_cadena COMA exp_cadena 
+lista_exp_cadena 		: 	lista_exp_cadena COMA exp_cadena
 						|	exp_cadena 	;
 
 exp_cadena 				: 	expresion | CADENA 	;
@@ -155,7 +170,7 @@ argumentos              :   argumentos COMA expresion
 
 expresion				:   PARENT_IZQ expresion PARENT_DER
 						| 	ID
-						| 	Constante						
+						| 	Constante
                         | 	OP_NOT expresion
 						| 	MASMENOS expresion %prec OP_NOT
 						| 	expresion OP_OR expresion
@@ -164,13 +179,13 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 						|	expresion OP_REL expresion
 						|	expresion OP_IGUALDAD expresion
 						|	expresion OP_MULT expresion
-						| 	expresion MASMENOS expresion 
+						| 	expresion MASMENOS expresion
 						|	Array_exp
 						|	Agregados
 						| 	error	;
 
 Agregados 				:	INICIO_BLOQUE argumentos FIN_BLOQUE	;
-						|	INICIO_BLOQUE argumentos PYC 
+						|	INICIO_BLOQUE argumentos PYC
 							argumentos FIN_BLOQUE ;
 
 Constante				:   CONSTANTE | NATURAL		;
