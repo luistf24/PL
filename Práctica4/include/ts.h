@@ -30,11 +30,11 @@ typedef struct
 #define YYSTYPE atributos
 
 int TS_Inserta(entradaTS elem){
-	
+
 	TOPE+=1;
 	TS[TOPE]=elem;
-	
-	imprimir_tabla();	
+
+	imprimir_tabla();
 }
 
 int TS_VaciarEntrada(){
@@ -69,12 +69,22 @@ int buscar_repetido(tipoEntrada tipo, char *nom){
 	return encontrado;
 }
 
+char *getEntrada( tipoEntrada tipo)
+{
+	char *nombre;
+	switch tipo:
+		case marca:
+			nombre="marca";
+			break:
+	return nombre;
+}
 
 void imprimir_tabla(){
 	printf("%-5s%-20s%-25s%-20s%-10s%-5s%-5s%-5s\n", "Num", "TipoEnt", "Nombre", "TipoDato", "Parametros", "Dimension", "Tam1", "Tam2");
-	
+
 	for(int i=0; i<=TOPE;i++)
 		//printf("%-5s%-20s%-25s%-20s%-10s%-5s%-5s%-5s\n", i, TS[i].entrada, TS[i].nombre, TS[i].tipoDato, TS[i].parametros, TS[i].dimensiones, TS[i].TamDimen1, TS[i].TamDimen2);
+		//printf("%-5s%-20s%-25s%-20s%-10s%-5s%-5s%-5s\n", i, getEntrada(TS[i].entrada));
 	printf("\n");
 	printf("\n");
 	printf("-------------------------------------------------------------------------------------------------------");
