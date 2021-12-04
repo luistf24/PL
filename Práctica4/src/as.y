@@ -83,7 +83,7 @@ Declar_de_var_locales   :   MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR
 Variables_locales 	    :   Variables_locales Cuerpo_declar_var
 						| 	Cuerpo_declar_var 	;
 
-Cuerpo_declar_var       :   tipo linea_variables PYC
+Cuerpo_declar_var       :   tipo linea_variables PYC //Aqui tengo que hacer una variable temporal temp1 del tipo correspondiente para asignarselo a todas
 						|	tipo linea_variables error 	;
 
 // Definido para no confundir con <Parametro>
@@ -92,9 +92,25 @@ tipo					:	TIPO | error 	;
 linea_variables			:	linea_variables COMA variable
 						|	variable	;
 
-variable 				:	ID | Array ;
+variable 				:	ID {
+tipoEntrada a =variable;
+dtipo b= no_asignado;
+entradaTS variable ={.entrada=a, .nombre="Lexema", .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
+TS_Inserta(variable);
 
-Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER
+
+}
+
+									| Array ;
+
+Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER {
+tipoEntrada a =variable;
+dtipo b= array;
+entradaTS variable ={.entrada=a, .nombre="Lexema", .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=$3.atrib, .TamDimen2=0};
+TS_Inserta(variable);
+
+
+}
 						|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER;
 
 Identificadores		    :   Identificadores COMA ID
@@ -107,17 +123,29 @@ Declar_de_subprogs 	    :   Declar_de_subprogs Declar_subprog
 Declar_subprog          : 	PROCEDIMIENTO ID {
 tipoEntrada a=procedimiento;
 dtipo b = no_asignado;
-														entradaTS procedimiento = {.entrada=a, .nombre=$ID.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
+														entradaTS procedimiento = {.entrada=a, .nombre=*yylex, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
 														TS_Inserta(procedimiento);
 
 
-} PARENT_IZQ Parametros  {TS[TOPE].parametros = $Parametros.param;} PARENT_DER bloque 	;
+} PARENT_IZQ Parametros  {TS[TOPE].parametros = $5.param;
+for(int i=0;i<$5.param;i++)
+{
+	tipoEntrada a=parametro_formal;
+	dtipo b= no_asignado;
+	entradaTS variable = {.entrada= a, .nombre="Lexema", .tipoDato = b, .parametros=0, .dimensiones=0, .TamDimen1=0, .TamDimen2=0};
+	//TODO meter tipo
+	//TODO si es array meter dimensiones
+	TS_Inserta(variable);
 
-Parametros			    :   Parametros COMA Parametro // {$$Parametros.param+=2;} No se que pasa aqui
-                        |  Parametro  {$Parametros.param=1+$Parametros.param;}
-                        |	{$Parametros.param=0;};
+}
 
-Parametro				:   TIPO ID
+} PARENT_DER bloque 	;
+
+Parametros			    :   Parametros COMA Parametro  {$$.param=1 +  $1.param + $2.param;}
+                        |  Parametro  {$$.param=1+$1.param;}
+                        |	{$$.param=0;};
+
+Parametro				:   TIPO ID //TODO if lexema="int" dtipo entero
 						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
 						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
 									CORCHETE_IZQ CORCHETE_DER;
@@ -170,7 +198,7 @@ argumentos              :   argumentos COMA expresion
 
 expresion				:   PARENT_IZQ expresion PARENT_DER
 						| 	ID
-						| 	Constante
+						| 	Constante {$$.atrib=$1.atrib;}
                         | 	OP_NOT expresion
 						| 	MASMENOS expresion %prec OP_NOT
 						| 	expresion OP_OR expresion
@@ -188,7 +216,7 @@ Agregados 				:	INICIO_BLOQUE argumentos FIN_BLOQUE	;
 						|	INICIO_BLOQUE argumentos PYC
 							argumentos FIN_BLOQUE ;
 
-Constante				:   CONSTANTE | NATURAL		;
+Constante				:   CONSTANTE {$$.atrib=yylex;} | NATURAL	{$$.atrib=*yylex;}	;
 
 %%
 
