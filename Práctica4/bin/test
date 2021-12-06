@@ -8,9 +8,9 @@ Principal
     		char c, c[2];
     		bool d;
 
-    		int a[SIZE*2];
-    		double b[SIZE**1, 10];
-    		char c[2,2<2];
+    		int a[5];
+    		double b[2, 10];
+    		char c[2,8];
     		bool d[z];
     	endvar
 

@@ -14,8 +14,8 @@ typedef struct entradaTS
 	dtipo 			tipoDato;
 	unsigned int 	parametros;
 	unsigned int 	dimensiones;
-	int 			TamDimen1;
-	int 			TamDimen2;
+	char* 			TamDimen1;
+	char* 			TamDimen2;
 } entradaTS;
 
 entradaTS TS[MAX_TS];
@@ -26,6 +26,7 @@ typedef struct
 	char *lexema;
 	dtipo tipo;
 	int param;
+	int dim;
 } atributos;
 
 #define YYSTYPE atributos
@@ -45,34 +46,35 @@ int TS_VaciarEntrada(){
 }
 
 int TS_VaciarBloque(){
-	while(!comprobar_Entrada(marca))  //Quito todas las entradas hasta llegar a la marca
+	while(!comprobar_Entrada(marca, TOPE))  //Quito todas las entradas hasta llegar a la marca
 		TS_VaciarEntrada();
 	TS_VaciarEntrada();  //Quito la marca
-	while (comprobar_Entrada(procedimiento) || comprobar_Entrada(parametro_formal)) //Quito los parametros y el procedimiento
+	while (comprobar_Entrada(procedimiento, TOPE) || comprobar_Entrada(parametro_formal, TOPE)) //Quito los parametros y el procedimiento
 		TS_VaciarEntrada();
 	//imprimir_tabla();
 	return TOPE;
 
 }
 
-int comprobar_Entrada(tipoEntrada tipo){
+int comprobar_Entrada(tipoEntrada tipo, int cont){
 	int ret = 0;
-	if (TS[TOPE].entrada==tipo)
+	if (TS[cont].entrada==tipo)
 		ret=1;
 	return ret;
 }
 
-//0= false
 int buscar_repetido(tipoEntrada tipo, char *nom){
 	int encontrado=0;
-	unsigned int tope_orig=TOPE;
-	while(!encontrado && !comprobar_Entrada(marca)){
-		TOPE-=1;
-		if (TS[TOPE].nombre==nom)
-			encontrado==1;
+	unsigned int cont=TOPE;
+	if (strcmp(nom,TS[cont].nombre)==0 && TS[cont].entrada==tipo) encontrado=1;
+	while(encontrado==0 && comprobar_Entrada(marca, cont)==0){
+		cont-=1;
+		if (strcmp(nom,TS[cont].nombre)==0 && TS[cont].entrada==tipo)
+			encontrado=1;
+
 	}
-	TOPE=tope_orig;
-	return encontrado;
+	if (encontrado==0) cont=0;
+	return cont;
 }
 
 char *getEntrada( tipoEntrada tipo)
@@ -129,10 +131,10 @@ char *getTipoDato(dtipo tipo)
 }
 
 void imprimir_tabla(){
-	printf("%-5s%-20s%-25s%-20s%-10s%-5s%-5s%-5s\n", "Num", "TipoEnt", "Nombre", "TipoDato", "Parametros", "Dimension", "Tam1", "Tam2");
+	printf("%-5s%-20s%-25s%-20s%-10s%-5s%-10s%-10s\n", "Num", "TipoEnt", "Nombre", "TipoDato", "Parametros", "Dimension", "Tam1", "Tam2");
 
 	for(int i=0; i<=TOPE;i++)
-		printf("%-5i%-20s%-25s%-20s%-10i%-5i%-5i%-5i\n", i, getEntrada(TS[i].entrada), TS[i].nombre, getTipoDato(TS[i].tipoDato), TS[i].parametros, TS[i].dimensiones, TS[i].TamDimen1, TS[i].TamDimen2);
+		printf("%-5i%-20s%-25s%-20s%-10i%-5i%-10s%-10s\n", i, getEntrada(TS[i].entrada), TS[i].nombre, getTipoDato(TS[i].tipoDato), TS[i].parametros, TS[i].dimensiones, TS[i].TamDimen1, TS[i].TamDimen2);
 		//printf("%-5i%-20s%-25s\n", i, getEntrada(TS[i].entrada), TS[i].nombre);
 
 	printf("\n");
