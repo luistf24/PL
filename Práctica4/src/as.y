@@ -117,10 +117,10 @@ Parametros			    :   Parametros COMA Parametro // {$$Parametros.param+=2;} No se
                         |  Parametro  {$Parametros.param=1+$Parametros.param;}
                         |	{$Parametros.param=0;};
 
-Parametro				:   TIPO ID
-						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
-						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
-									CORCHETE_IZQ CORCHETE_DER;
+Parametro				:   TIPO ID {$Parametro.tipo = $TIPO.tipo;}
+						|	TIPO ID CORCHETE_IZQ CORCHETE_DER {$Parametro.tipo = $TIPO.tipo;}
+						|	TIPO ID CORCHETE_IZQ CORCHETE_DER 
+									CORCHETE_IZQ CORCHETE_DER {$Parametro.tipo = $TIPO.tipo;}
 						|	error	;
 
 Sentencias 			    :   Sentencias Sentencia
@@ -135,7 +135,7 @@ Sentencia 			    :   bloque
 						| 	sentencia_salida
 						| 	llamada_proced 	;
 
-sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC ;
+sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC  ;
 
 Ide_exp 				:	ID | Array_exp 	;
 
@@ -169,7 +169,7 @@ argumentos              :   argumentos COMA expresion
                         |   expresion 	;
 
 expresion				:   PARENT_IZQ expresion PARENT_DER
-						| 	ID
+						| 	ID {$expresion.tipo = $ID.tipo;} //comentario
 						| 	Constante
                         | 	OP_NOT expresion
 						| 	MASMENOS expresion %prec OP_NOT
