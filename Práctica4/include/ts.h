@@ -39,7 +39,8 @@ int TS_Inserta(entradaTS elem){
 }
 
 int TS_VaciarEntrada(){
-	TOPE-=1;
+	if(TOPE>0) TOPE-=1;
+	imprimir_tabla();
 	return TOPE;
 }
 
@@ -47,7 +48,7 @@ int TS_VaciarBloque(){
 	while(!comprobar_Entrada(marca))  //Quito todas las entradas hasta llegar a la marca
 		TS_VaciarEntrada();
 	TS_VaciarEntrada();  //Quito la marca
-	if (comprobar_Entrada(procedimiento))
+	while (comprobar_Entrada(procedimiento) || comprobar_Entrada(parametro_formal)) //Quito los parametros y el procedimiento
 		TS_VaciarEntrada();
 	//imprimir_tabla();
 	return TOPE;
