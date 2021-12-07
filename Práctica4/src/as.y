@@ -101,7 +101,7 @@ TS_Inserta(variable);
 
 }
 
-									| Array ;
+						| Array ;
 
 Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER {
 tipoEntrada a =variable;
@@ -145,7 +145,17 @@ Parametros			    :   Parametros COMA Parametro  {$$.param=1 +  $1.param + $2.par
                         |  Parametro  {$$.param=1+$1.param;}
                         |	{$$.param=0;};
 
-Parametro				:   TIPO ID //TODO if lexema="int" dtipo entero
+Parametro				:   TIPO ID {
+	$$.tipo = $TIPO.tipo; 
+	if($1.lexema=="int") 
+		$$.tipo=entero;
+	else if($1.lexema=="double")
+		$$.tipo=real;
+	else if($1.lexema=="char")
+		$$.tipo=caracter;
+	else if($1.lexema=="bool")
+		$$.tipo=booleano;	
+	} 
 						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
 						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
 									CORCHETE_IZQ CORCHETE_DER;
