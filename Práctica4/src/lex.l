@@ -48,21 +48,21 @@ otros			.
 "+"                  return MASMENOS;
 "-"                  return MASMENOS;
 "procedimiento"      return PROCEDIMIENTO;
-"int"                return TIPO;
-"double"             return TIPO;
-"char"               return TIPO;
-"bool"               return TIPO;
+"int"                {yylval.tipo= entero; return TIPO;}
+"double"             {yylval.tipo= real; return TIPO;}
+"char"               {yylval.tipo= caracter; return TIPO;}
+"bool"               {yylval.tipo= booleano; return TIPO;}
 "var"                return MARCA_INICIO_VAR;
 "endvar"             return MARCA_FIN_VAR;
 "Entrada"            return ENTRADA;
 "Salida"             return SALIDA;
-{NATURAL}            return NATURAL;
-{REAL}               return CONSTANTE;
+{NATURAL}            {yylval.lexema= strdup(yytext); return NATURAL;}
+{REAL}               {yylval.lexema= strdup(yytext); return CONSTANTE;}
 {CARACTER}           return CONSTANTE;
 "verdadero"          return CONSTANTE;
 "falso"              return CONSTANTE;
 {CADENA}             return CADENA;
-{ID}                 return ID;
+{ID}                 {yylval.lexema= strdup(yytext); return ID;}
 [\n]                 linea_actual++;
 [ \t]               ;
 .                  {
