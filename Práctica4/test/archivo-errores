@@ -38,17 +38,13 @@ Principal
 
     procedimiento D()
     {
-		var
-			double l;
-		endvar
     	procedimiento E()
     	{
 			Salida "Resultado : ", 10;
             si(vector[vector[0]] == 100) entonces
             {
                 vector[y] = 6;
-            } sino { x = 0; }
+            } sino { x = 2.5; }
     	}
-		l = "a";
     }
 }

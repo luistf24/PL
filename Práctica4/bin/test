@@ -23,7 +23,7 @@ Principal
 
     			si (x > 10 && y <= 4) entonces
     			{
-    				A();
+    				A(x,a,d);
     				y = {1, 2, 5, 4};
     			}
     			
@@ -32,7 +32,6 @@ Principal
                         y = y + 2;
     		}
 
-    		
     	}
     }
 

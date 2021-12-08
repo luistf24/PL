@@ -178,9 +178,8 @@ Sentencia 			    :   bloque
 						| 	llamada_proced 	;
 
 sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC {
-								entradaTS asignacion = {.entrada=var_asignada, .nombre=$1.lexema, .tipoDato = 0, .parametros=0, .dimensiones=0, .TamDimen1="desc", .TamDimen2="desc"};
+								entradaTS asignacion = {.entrada=var_asignada, .nombre=$1.lexema, .tipoDato = desconocido, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
 								if($1.tipo == $3.tipo){
-									printf("%s",$1.tipo);
 									printf("%s",$3.tipo);
 									asignacion.tipoDato=$3.tipo;
 									$1.atrib = $3.atrib;
@@ -191,11 +190,34 @@ sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC {
 								TS_Inserta(asignacion);
 															} ;
 
-Ide_exp 				:	ID | Array_exp 	;
+Ide_exp 				:	ID  {$$.tipo = $1.tipo;
+								tipoEntrada a1 = variable;
+								tipoEntrada a2 = parametro_formal;
+								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
+								int ind1 = buscar_repetido(a1,$1.lexema);
+								int ind2 = buscar_repetido(a2,$1.lexema);
+								if(ind1 != 0 || ind2 != 0)
+									TS_Inserta(comprob_ambito);
+								else{
+									printf("error_semantico: variable usada fuera de ambito");
+								}}
+						| 	Array_exp 	{$$.tipo = $1.tipo;};
 
 
-Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
-			  			|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER 	;
+Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER  {$$.tipo = $1.tipo;
+																	tipoEntrada a1 = variable;
+																	tipoEntrada a2 = parametro_formal;
+																	entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, 				.parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
+																	int ind1 = buscar_repetido(a1,$1.lexema);
+																	int ind2 = buscar_repetido(a2,$1.lexema);
+																	if(ind1 != 0 || ind2 != 0)
+																		TS_Inserta(comprob_ambito);
+																	else{
+																		printf("error_semantico: variable usada fuera de ambito");
+																	}}
+			  			|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER {$$.tipo = $1.tipo;
+						  															//if($3.tipo==$5.tipo)
+																						}	;
 
 sentencia_si			:   si
 						|	si SINO Sentencia 	;
@@ -215,16 +237,50 @@ lista_exp_cadena 		: 	lista_exp_cadena COMA exp_cadena
 
 exp_cadena 				: 	expresion | CADENA 	;
 
-llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC
-						|	ID PARENT_IZQ PARENT_DER PYC
+llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_buscar = procedimiento;
+																	tipoEntrada a = llamada_proc;
+																	dtipo b = desconocido;
+																	entradaTS llama_proc ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
+																	int ind = buscar_ambito(a_buscar,$1.lexema);
+																	if(ind!=0){
+																		if(TS[ind].parametros == $3.param)
+																			TS_Inserta(llama_proc);
+																		else
+																			yyerror("numero de argumentos incorrecto");
+																	}
+																}
+						|	ID PARENT_IZQ PARENT_DER PYC {tipoEntrada a_buscar = procedimiento;
+																	tipoEntrada a = llamada_proc;
+																	dtipo b = desconocido;
+																	entradaTS llama_proc ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
+																	int ind = buscar_ambito(a_buscar,$1.lexema);
+																	printf("%s \n",$1.lexema);
+																	printf("procedimiento encontrado en: %i \n",ind);
+																	if(ind!=0){
+																		if(TS[ind].parametros == 0)
+																			TS_Inserta(llama_proc);
+																		else
+																			yyerror("numero de argumentos incorrecto");
+																	}
+																}
 						|   error   ;
 
-argumentos              :   argumentos COMA expresion
-                        |   expresion 	;
+argumentos              :   argumentos COMA expresion {$$.param = 1 + $1.param + $3.param;}
+                        |   expresion {$$.param = 1 + $1.param;}	;
 
 expresion				:   PARENT_IZQ expresion PARENT_DER
-						| 	ID   {$$.lexema=$1.lexema;}
-						| 	Constante {$$.lexema=$1.lexema;}
+						| 	ID   {$$.lexema=$1.lexema;$$.tipo=$1.tipo;
+								tipoEntrada a1 = variable;
+								tipoEntrada a2 = parametro_formal;
+								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
+								int ind1 = buscar_repetido(a1,$1.lexema);
+								int ind2 = buscar_repetido(a2,$1.lexema);
+								if(ind1 != 0 || ind2 != 0)
+									TS_Inserta(comprob_ambito);
+								else{
+									printf("error_semantico: variable usada fuera de ambito");
+								}   }
+						| 	Constante {$$.lexema=$1.lexema;$$.tipo=$1.tipo;}
                         | 	OP_NOT expresion
 						| 	MASMENOS expresion %prec OP_NOT
 						| 	expresion OP_OR expresion
@@ -242,7 +298,12 @@ Agregados 				:	INICIO_BLOQUE argumentos FIN_BLOQUE	;
 						|	INICIO_BLOQUE argumentos PYC
 							argumentos FIN_BLOQUE ;
 
-Constante				:   CONSTANTE {$$.lexema=yylval.lexema;} | NATURAL	{$$.lexema=yylval.lexema;}	;
+Constante				:   CONSTANTE {$$.lexema=yylval.lexema;
+										if($1.tipo==real)
+											$$.tipo=real;
+										else	
+											$$.tipo=caracter;} 
+						| 	NATURAL	{$$.lexema=yylval.lexema;}	;
 
 %%
 

@@ -3,7 +3,7 @@
 unsigned int TOPE=-1;
 unsigned int Subprog;
 
-typedef enum TIPO {marca, procedimiento, variable, parametro_formal, funcion, var_asignada} tipoEntrada;
+typedef enum TIPO {marca, procedimiento, variable, parametro_formal, funcion, var_asignada, llamada_proc, compr_ambito} tipoEntrada;
 
 typedef enum {entero, real, caracter, booleano, array, desconocido, no_asignado} dtipo;
 
@@ -77,6 +77,20 @@ int buscar_repetido(tipoEntrada tipo, char *nom){
 	return cont;
 }
 
+int buscar_ambito(tipoEntrada tipo, char *nom){
+	int encontrado = 0;
+	unsigned int cont=TOPE;
+	if (strcmp(nom,TS[cont].nombre)==0 && TS[cont].entrada==tipo) encontrado=1;
+	while(encontrado==0 && TOPE != 0){
+		cont-=1;
+		if (strcmp(nom,TS[cont].nombre)==0 && TS[cont].entrada==tipo)
+			encontrado=1;
+
+	}
+	if (encontrado==0) cont=0;
+	return cont;
+}
+
 char *getEntrada( tipoEntrada tipo)
 {
 	char *nombre;
@@ -98,6 +112,12 @@ char *getEntrada( tipoEntrada tipo)
 			break;
 		case var_asignada:
 			nombre="var_asignada";
+			break;
+		case llamada_proc:
+			nombre="llamada_proc";
+			break;
+		case compr_ambito:
+			nombre="compr_ambito";
 			break;
 		default:
 			nombre="ninguno";
