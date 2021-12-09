@@ -37,6 +37,7 @@ int TS_Inserta(entradaTS elem){
 	TS[TOPE]=elem;
 
 	imprimir_tabla();
+	return TOPE;
 }
 
 int TS_VaciarEntrada(){
