@@ -36,12 +36,12 @@ int TS_Inserta(entradaTS elem){
 	TOPE+=1;
 	TS[TOPE]=elem;
 
-	imprimir_tabla();
+	//imprimir_tabla();
 }
 
 int TS_VaciarEntrada(){
 	if(TOPE>0) TOPE-=1;
-	imprimir_tabla();
+	//imprimir_tabla();
 	return TOPE;
 }
 
@@ -81,7 +81,7 @@ int buscar_ambito(tipoEntrada tipo, char *nom){
 	int encontrado = 0;
 	unsigned int cont=TOPE;
 	if (strcmp(nom,TS[cont].nombre)==0 && TS[cont].entrada==tipo) encontrado=1;
-	while(encontrado==0 && TOPE != 0){
+	while(encontrado==0 && cont != 0){
 		cont-=1;
 		if (strcmp(nom,TS[cont].nombre)==0 && TS[cont].entrada==tipo)
 			encontrado=1;

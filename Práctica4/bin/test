@@ -23,7 +23,7 @@ Principal
 
     			si (x > 10 && y <= 4) entonces
     			{
-    				A(x,a,d);
+    				A(x,a,d,z);
     				y = {1, 2, 5, 4};
     			}
     			
@@ -43,6 +43,7 @@ Principal
 
             si(vector[vector[0]] == 100) entonces
             {
+				A(x,a,d);
                 vector[y] = 6;
             } sino { x = 0; }
     	}
