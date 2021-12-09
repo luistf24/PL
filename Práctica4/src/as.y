@@ -60,23 +60,23 @@ dtipo temp=no_asignado;
 
 Principal             	:   PRINCIPAL bloque 	;
 
-bloque 					:   INICIO_BLOQUE {
+bloque 					:   INICIO_BLOQUE 
+							{
 								tipoEntrada a=marca;
 								dtipo b = desconocido;
-								entradaTS marca = {.entrada=a, .nombre="marca", .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
+								entradaTS marca = {.entrada=a, .nombre="marca", .tipoDato=b, 
+								.parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
 
 								TS_Inserta(marca);
-								} Declar_de_var_locales	Declar_de_subprogs FIN_BLOQUE { TS_VaciarBloque();}
+							} 
+							
+							Declar_de_var_locales	
+							Declar_de_subprogs 
+							Resto_bloque	;
 
-						| 	INICIO_BLOQUE {
-														tipoEntrada a=marca;
-														dtipo b = desconocido;
-														entradaTS marca = {.entrada=a, .nombre="marca", .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
-
-														TS_Inserta(marca);
-														}
-
-						Declar_de_var_locales Declar_de_subprogs Sentencias FIN_BLOQUE { TS_VaciarBloque();} ;
+Resto_bloque			:	Sentencias 
+							FIN_BLOQUE { TS_VaciarBloque();}
+						|	FIN_BLOQUE { TS_VaciarBloque();}	;
 
 Declar_de_var_locales   :   MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR
                         |   ;
@@ -84,52 +84,42 @@ Declar_de_var_locales   :   MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR
 Variables_locales 	    :   Variables_locales Cuerpo_declar_var
 						| 	Cuerpo_declar_var 	;
 
-Cuerpo_declar_var       :   tipo linea_variables PYC {
-													for(int i=0; i<$2.param;i++)
-														TS[TOPE-i].tipoDato=$1.tipo;
-													}
+Cuerpo_declar_var       :   tipo linea_variables PYC 
+							{
+								for(int i=0; i<$2.param;i++)
+									TS[TOPE-i].tipoDato=$1.tipo;
+							}
+						
 						|	tipo linea_variables error 	;
 
 // Definido para no confundir con <Parametro>
-tipo					:	TIPO {temp=$1.tipo; $$.tipo=$1.tipo;}
-						| error 	;
+tipo					:	TIPO {	temp=$1.tipo; $$.tipo=$1.tipo;	}
+						| 	error 	;
 
-linea_variables			:	linea_variables COMA variable {$$.param= $$.param+1;}
-						|	variable {$$.param=1;}	;
+linea_variables			:	linea_variables COMA variable {	$$.param= $$.param+1;	}
+						|	variable {	$$.param=1;	}	;
 
-variable 				:	ID {
+variable 				:	ID 
+							{
+								tipoEntrada a = variable;
+								dtipo b = temp;
+								entradaTS variable = {.entrada=a, .nombre=$1.lexema, .tipoDato=b, 
+								.parametros=0, .dimensiones=0, .TamDimen1 ="0", .TamDimen2="0"};
+								int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido
+								
+								if (ind == 0) TS_Inserta(variable); // No lo está, lo añado
+								else TS[ind] = variable;
+							}
 
-											tipoEntrada a =variable;
-											dtipo b= temp;
-											entradaTS variable ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
-											int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido
-											if (ind==0) TS_Inserta(variable); // No lo está, lo añado
-											else TS[ind]=variable;
+						|	Array ;
 
+Array 					: 	ID 
+							CORCHETE_IZQ expresion CORCHETE_DER 
 
-											}
-
-						| Array ;
-
-Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER {
-																														tipoEntrada a =variable;
-																														dtipo b= array;
-																														entradaTS variable ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=1, .TamDimen1=$3.lexema, .TamDimen2="0"};
-																														int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido
-																														if (ind==0) TS_Inserta(variable); // No lo está, lo añado
-																														else TS[ind]=variable;
-																														}
-
-						|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER {
-																																				tipoEntrada a =variable;
-																																				dtipo b= array;
-																																				entradaTS variable ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=2, .TamDimen1=$3.lexema, .TamDimen2=$5.lexema};
-																																				int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido
-																																				if (ind==0) TS_Inserta(variable); // No lo está, lo añado
-																																				else TS[ind]=variable;
-
-
-																																				};
+						|	ID
+							CORCHETE_IZQ 
+							expresion COMA expresion 
+							CORCHETE_DER	;
 
 Identificadores		    :   Identificadores COMA ID
                         |   ID
@@ -138,31 +128,56 @@ Identificadores		    :   Identificadores COMA ID
 Declar_de_subprogs 	    :   Declar_de_subprogs Declar_subprog
 						|	;
 
-Declar_subprog          : 	PROCEDIMIENTO ID {
-														tipoEntrada a=procedimiento;
-														dtipo b = desconocido;
-														entradaTS procedimiento = {.entrada=a, .nombre=yylval.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
-														TS_Inserta(procedimiento);
+Declar_subprog          : 	PROCEDIMIENTO ID 
+							{
+								tipoEntrada a = procedimiento;
+								dtipo b = desconocido;
+								entradaTS procedimiento = {.entrada=a, .nombre=yylval.lexema, 
+								.tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
+								TS_Inserta(procedimiento);
 
+							} 
 
-} PARENT_IZQ Parametros  {
-													int ind= buscar_repetido(procedimiento, $2.lexema);
-													TS[ind].parametros=$5.param;
-													} PARENT_DER bloque 	;
+							PARENT_IZQ Parametros  
+							{
+								int ind = buscar_repetido(procedimiento, $2.lexema);
+								TS[ind].parametros=$5.param;
+							}
 
-Parametros			    :   Parametros COMA Parametro  {$$.param=1 +  $1.param + $2.param;}
-                        |  Parametro  {$$.param=1+$1.param;}
+							PARENT_DER bloque 	;
+
+Parametros			    :	Parametros COMA Parametro  {$$.param=1 +  $1.param + $2.param;}
+                        | 	Parametro  {$$.param=1+$1.param;}
                         |	{$$.param=0;};
 
-Parametro				:   TIPO ID {
-								entradaTS param_form = {.entrada=parametro_formal,.nombre=$2.lexema	, .tipoDato = $1.tipo, .parametros=0,.dimensiones=0, .TamDimen1=0,	.TamDimen2="0"};
+Parametro				:   TIPO ID
+							{
+								entradaTS param_form = {.entrada=parametro_formal,
+								.nombre=$2.lexema	, .tipoDato = $1.tipo, .parametros=0,.
+								dimensiones=0, .TamDimen1=0,	.TamDimen2="0"};
+								
 								TS_Inserta(param_form);
-								}
-						|	TIPO ID CORCHETE_IZQ CORCHETE_DER {entradaTS param_form = {.entrada=parametro_formal, .nombre=$2.lexema, .tipoDato = array, .parametros=0, .dimensiones=1, .TamDimen1="desc", .TamDimen2="desc"};
-																								TS_Inserta(param_form);}
+							}
+						
+						|	TIPO ID CORCHETE_IZQ CORCHETE_DER 
+							{
+								entradaTS param_form = {.entrada=parametro_formal, 
+								.nombre=$2.lexema, .tipoDato = array, .parametros=0, 
+								.dimensiones=1, .TamDimen1="desc", .TamDimen2="desc"};
+								
+								TS_Inserta(param_form);
+							}
+						
 						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
-									CORCHETE_IZQ CORCHETE_DER {entradaTS param_form = {.entrada=parametro_formal, .nombre=$2.lexema, .tipoDato = array, .parametros=0, .dimensiones=2, .TamDimen1="desc", .TamDimen2="desc"};
-									TS_Inserta(param_form);};
+							CORCHETE_IZQ CORCHETE_DER 
+							{
+								entradaTS param_form = {.entrada=parametro_formal, 
+								.nombre=$2.lexema, .tipoDato = array, .parametros=0, 
+								.dimensiones=2, .TamDimen1="desc", .TamDimen2="desc"};
+								
+								TS_Inserta(param_form);
+							}
+						
 						|	error	;
 
 Sentencias 			    :   Sentencias Sentencia
@@ -177,47 +192,75 @@ Sentencia 			    :   bloque
 						| 	sentencia_salida
 						| 	llamada_proced 	;
 
-sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC {
-								entradaTS asignacion = {.entrada=var_asignada, .nombre=$1.lexema, .tipoDato = desconocido, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
-								if($1.tipo == $3.tipo){
+sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC 
+							{
+								entradaTS asignacion = {.entrada=var_asignada, 
+								.nombre=$1.lexema, .tipoDato = desconocido, .parametros=0, 
+								.dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
+								
+								if($1.tipo == $3.tipo)
+								{
 									printf("%s",$3.tipo);
 									asignacion.tipoDato=$3.tipo;
 									$1.atrib = $3.atrib;
 									printf("some shit *********\n");
-								}else{
+								}
+
+								else{
 									printf("error de asignación, tipos distintos");
 								}
+								
 								TS_Inserta(asignacion);
-															} ;
+							} ;
 
-Ide_exp 				:	ID  {$$.tipo = $1.tipo;
+Ide_exp 				:	ID 
+							{
+								$$.tipo = $1.tipo;
 								tipoEntrada a1 = variable;
 								tipoEntrada a2 = parametro_formal;
-								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
+								
+								entradaTS comprob_ambito = {.entrada=compr_ambito, 
+								.nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, 
+								.dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
+								
 								int ind1 = buscar_repetido(a1,$1.lexema);
 								int ind2 = buscar_repetido(a2,$1.lexema);
+								
 								if(ind1 != 0 || ind2 != 0)
 									TS_Inserta(comprob_ambito);
 								else{
 									printf("error_semantico: variable usada fuera de ambito");
-								}}
+								}
+							}
+						
 						| 	Array_exp 	{$$.tipo = $1.tipo;};
 
 
-Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER  {$$.tipo = $1.tipo;
-																	tipoEntrada a1 = variable;
-																	tipoEntrada a2 = parametro_formal;
-																	entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, 				.parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
-																	int ind1 = buscar_repetido(a1,$1.lexema);
-																	int ind2 = buscar_repetido(a2,$1.lexema);
-																	if(ind1 != 0 || ind2 != 0)
-																		TS_Inserta(comprob_ambito);
-																	else{
-																		printf("error_semantico: variable usada fuera de ambito");
-																	}}
-			  			|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER {$$.tipo = $1.tipo;
-						  															//if($3.tipo==$5.tipo)
-																						}	;
+Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER  
+							{
+								$$.tipo = $1.tipo;
+								tipoEntrada a1 = variable;
+								tipoEntrada a2 = parametro_formal;
+								
+								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema,
+								.tipoDato=$1.tipo, .parametros=0, .dimensiones=0,
+								.TamDimen1="0", .TamDimen2="0"};  
+								
+								int ind1 = buscar_repetido(a1,$1.lexema);
+								int ind2 = buscar_repetido(a2,$1.lexema);
+								
+								if(ind1 != 0 || ind2 != 0)
+									TS_Inserta(comprob_ambito);
+								else{
+									printf("error_semantico: variable usada fuera de ambito");
+								}
+							}
+			  			
+			  			|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
+			  				{
+			  					$$.tipo = $1.tipo;
+								//if($3.tipo==$5.tipo)
+							}	;
 
 sentencia_si			:   si
 						|	si SINO Sentencia 	;
@@ -237,49 +280,74 @@ lista_exp_cadena 		: 	lista_exp_cadena COMA exp_cadena
 
 exp_cadena 				: 	expresion | CADENA 	;
 
-llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_buscar = procedimiento;
-																	tipoEntrada a = llamada_proc;
-																	dtipo b = desconocido;
-																	entradaTS llama_proc ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
-																	int ind = buscar_ambito(a_buscar,$1.lexema);
-																	if(ind!=0){
-																		if(TS[ind].parametros == $3.param)
-																			TS_Inserta(llama_proc);
-																		else
-																			yyerror("numero de argumentos incorrecto");
-																	}
-																}
-						|	ID PARENT_IZQ PARENT_DER PYC {tipoEntrada a_buscar = procedimiento;
-																	tipoEntrada a = llamada_proc;
-																	dtipo b = desconocido;
-																	entradaTS llama_proc ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
-																	int ind = buscar_ambito(a_buscar,$1.lexema);
-																	printf("%s \n",$1.lexema);
-																	printf("procedimiento encontrado en: %i \n",ind);
-																	if(ind!=0){
-																		if(TS[ind].parametros == 0)
-																			TS_Inserta(llama_proc);
-																		else
-																			yyerror("numero de argumentos incorrecto");
-																	}
-																}
+llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC 
+							{
+								tipoEntrada a_buscar = procedimiento;
+								tipoEntrada a = llamada_proc;
+								dtipo b = desconocido;
+								
+								entradaTS llama_proc ={.entrada=a, .nombre=$1.lexema, 
+								.tipoDato=b, .parametros=0, .dimensiones=0, 
+								.TamDimen1="0", .TamDimen2="0"};
+								
+								int ind = buscar_ambito(a_buscar,$1.lexema);
+								if(ind!=0)
+								{
+									if(TS[ind].parametros == $3.param)
+										TS_Inserta(llama_proc);
+									else
+										yyerror("numero de argumentos incorrecto");
+								}
+							}
+						
+						|	ID PARENT_IZQ PARENT_DER PYC 
+							{
+								tipoEntrada a_buscar = procedimiento;
+								tipoEntrada a = llamada_proc;
+								dtipo b = desconocido;
+								
+								entradaTS llama_proc ={.entrada=a, .nombre=$1.lexema, 
+								.tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", 
+								.TamDimen2="0"};
+								
+								int ind = buscar_ambito(a_buscar,$1.lexema);
+								printf("%s \n",$1.lexema);
+								printf("procedimiento encontrado en: %i \n",ind);
+								
+								if(ind!=0)
+								{
+									if(TS[ind].parametros == 0)
+										TS_Inserta(llama_proc);
+									else
+										yyerror("numero de argumentos incorrecto");
+								}
+							}
 						|   error   ;
 
 argumentos              :   argumentos COMA expresion {$$.param = 1 + $1.param + $3.param;}
                         |   expresion {$$.param = 1 + $1.param;}	;
 
 expresion				:   PARENT_IZQ expresion PARENT_DER
-						| 	ID   {$$.lexema=$1.lexema;$$.tipo=$1.tipo;
+						| 	ID
+							{
+								$$.lexema=$1.lexema;$$.tipo=$1.tipo;
 								tipoEntrada a1 = variable;
 								tipoEntrada a2 = parametro_formal;
-								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
+								
+								entradaTS comprob_ambito = {.entrada=compr_ambito, 
+								.nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, 
+								.dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
+								
 								int ind1 = buscar_repetido(a1,$1.lexema);
 								int ind2 = buscar_repetido(a2,$1.lexema);
+								
 								if(ind1 != 0 || ind2 != 0)
 									TS_Inserta(comprob_ambito);
 								else{
 									printf("error_semantico: variable usada fuera de ambito");
-								}   }
+								}
+							}
+						
 						| 	Constante {$$.lexema=$1.lexema;$$.tipo=$1.tipo;}
                         | 	OP_NOT expresion
 						| 	MASMENOS expresion %prec OP_NOT
@@ -298,11 +366,15 @@ Agregados 				:	INICIO_BLOQUE argumentos FIN_BLOQUE	;
 						|	INICIO_BLOQUE argumentos PYC
 							argumentos FIN_BLOQUE ;
 
-Constante				:   CONSTANTE {$$.lexema=yylval.lexema;
-										if($1.tipo==real)
-											$$.tipo=real;
-										else	
-											$$.tipo=caracter;} 
+Constante				:   CONSTANTE 
+							{
+								$$.lexema=yylval.lexema;
+								if($1.tipo==real)
+									$$.tipo=real;
+								else	
+									$$.tipo=caracter;
+							} 
+						
 						| 	NATURAL	{$$.lexema=yylval.lexema;}	;
 
 %%
