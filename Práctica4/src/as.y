@@ -125,9 +125,17 @@ Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER {
 																tipoEntrada a =variable;		
 																dtipo b= array;							
 																entradaTS variable ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=1,.TamDimen1=$3.lexema,.TamDimen2="0"};
-																int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido					
-																if (ind==0) 
-																	TS_Inserta(variable); // No lo está, lo añado	
+																int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido	
+
+																tipoEntrada a2 = parametro_formal;
+																int ind2 = buscar_ambito(a2,$1.lexema);
+
+																if (ind==0){
+																	if(ind2==0)
+																		TS_Inserta(variable); // No lo está, lo añado	
+																	else
+																		printf("error semantico: ya existe un parámetro %s en una funcion \n", $1.lexema);
+																} 
 																else TS[ind]=variable;		
 						}
 
@@ -136,8 +144,16 @@ Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER {
 																dtipo b= array;
 																entradaTS variable ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=2, .TamDimen1=$3.lexema, .TamDimen2=$5.lexema};
 																int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido
-																if (ind==0) 
-																	TS_Inserta(variable); // No lo está, lo añado
+
+																tipoEntrada a2 = parametro_formal;
+																int ind2 = buscar_ambito(a2,$1.lexema);
+
+																if (ind==0){
+																	if(ind2==0)
+																		TS_Inserta(variable); // No lo está, lo añado	
+																	else
+																		printf("error semantico: ya existe un parámetro %s en una funcion \n", $1.lexema);
+																}
 																else 
 																	TS[ind]=variable;								
 							};
@@ -183,7 +199,7 @@ Parametro				:   TIPO ID
 						|	TIPO ID CORCHETE_IZQ CORCHETE_DER 
 							{
 								entradaTS param_form = {.entrada=parametro_formal, 
-								.nombre=$2.lexema, .tipoDato = array, .parametros=0, 
+								.nombre=$2.lexema, .tipoDato = $1.tipo, .parametros=0, 
 								.dimensiones=1, .TamDimen1="desc", .TamDimen2="desc"};
 								
 								TS_Inserta(param_form);
@@ -193,7 +209,7 @@ Parametro				:   TIPO ID
 							CORCHETE_IZQ CORCHETE_DER 
 							{
 								entradaTS param_form = {.entrada=parametro_formal, 
-								.nombre=$2.lexema, .tipoDato = array, .parametros=0, 
+								.nombre=$2.lexema, .tipoDato = $1.tipo, .parametros=0, 
 								.dimensiones=2, .TamDimen1="desc", .TamDimen2="desc"};
 								
 								TS_Inserta(param_form);
@@ -219,7 +235,7 @@ sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC {
 									$$.tipo = $3.tipo;
 									asignacion.tipoDato=$3.tipo;
 								}else{
-									printf("error de asignación, tipos distintos");
+									printf("error semantico: intento de asignación entre tipos distintos");
 								}
 								
 								TS_Inserta(asignacion);
@@ -313,10 +329,10 @@ llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_b
 																			tipoEntrada c = parametro_formal;
 																			int ind2 = buscar_ambito(a_buscar,$1.lexema);
 
-																			while(contador <= $3.param && tip_correcto==1){
-																				printf("%s || %s tip_corr: %i\n", TS[ind2+contador+1].nombre, TS[TOPE-$3.param+1+contador].nombre, tip_correcto);
-																				if(TS[ind2+contador].tipoDato == TS[TOPE-$3.param+contador].tipoDato){
-																					printf("beep\n");
+																			while(contador < $3.param && tip_correcto==1){
+																				//printf("%s || %s tip_corr: %i\n", TS[ind2+contador+1].nombre, TS[TOPE-$3.param+1+contador].nombre, tip_correcto);
+																				if(TS[ind2+contador+1].tipoDato == TS[TOPE-$3.param+contador+1].tipoDato){
+																					//printf("beep\n");
 																					tip_correcto=1;
 																				}
 																				else
@@ -363,8 +379,13 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
 								int ind1 = buscar_ambito(a1,$1.lexema);
 								int ind2 = buscar_ambito(a2,$1.lexema);
-								if(ind1 != 0 || ind2 != 0)
+								if(ind1 != 0 || ind2 != 0){
+									if(ind1!=0)
+										comprob_ambito.tipoDato = TS[ind1].tipoDato;
+									else if(ind2!=0)
+										comprob_ambito.tipoDato = TS[ind2].tipoDato;
 									TS_Inserta(comprob_ambito);
+								}
 								else{
 									printf("error_semantico: variable %s usada fuera de ambito \n", $1.lexema);
 								}   

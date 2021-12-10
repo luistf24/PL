@@ -10,7 +10,7 @@ Principal
 
     		int n[5];
     		double m[2, 10];
-    		char c[2,8];
+    		char k[2,8];
     		bool d[z], g[1,2];
     	endvar
 
