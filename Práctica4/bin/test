@@ -3,15 +3,15 @@ Principal
     procedimiento A(int a, double B, bool c[][])
     {
     	var
+    		double j, u, i;
     		int x, y, z;
-    		double x, y, z;
-    		char l, l[2];
+    		char l;
     		bool d;
 
     		int n[5];
     		double m[2, 10];
     		char c[2,8];
-    		bool d[z];
+    		bool d[z], g[1,2];
     	endvar
 
     	procedimiento B(int a, int b)
@@ -23,7 +23,7 @@ Principal
 
     			si (x > 10 && y <= 4) entonces
     			{
-    				A(x,a,d,z);
+    				A(x,j,g);
     				y = {1, 2, 5, 4};
     			}
     			
@@ -39,13 +39,17 @@ Principal
     {
     	procedimiento E()
     	{
+			var 
+				int vector[10];
+				int g, u;
+			endvar
+
             Salida "Resultado : ", 10;
 
             si(vector[vector[0]] == 100) entonces
             {
-				A(x,a,d);
-                vector[y] = 6;
-            } sino { x = 0; }
+                vector[g] = 6;
+            } sino { u = 0; }
     	}
     }
 }

@@ -253,6 +253,9 @@ Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
 								$$.tipo = $1.tipo;
 								tipoEntrada a1 = variable;
 								tipoEntrada a2 = parametro_formal;
+
+								if($3.tipo != entero)
+									printf("error semantico: tipo de dato para indice erroneo, se espera entero \n");
 								
 								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema,
 								.tipoDato=$1.tipo, .parametros=0, .dimensiones=0,
@@ -332,10 +335,11 @@ llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_b
 argumentos              :   argumentos COMA expresion {$$.param = 1 + $1.param + $3.param;}
                         |   expresion {$$.param = 1 + $1.param;}	;
 
-expresion				:   PARENT_IZQ expresion PARENT_DER
+expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 						| 	ID
 							{
-								$$.lexema=$1.lexema;$$.tipo=$1.tipo;
+								$$.lexema=yylval.lexema;
+								$$.tipo=yylval.tipo;
 								tipoEntrada a1 = variable;
 								tipoEntrada a2 = parametro_formal;
 								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
@@ -347,7 +351,8 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 									printf("error_semantico: variable %s usada fuera de ambito \n", $1.lexema);
 								}   
 							}
-						| 	Constante {$$.lexema=$1.lexema;$$.tipo=$1.tipo;}
+						| 	Constante {$$.lexema=yylval.lexema;
+									   $$.tipo=yylval.tipo;}
                         | 	OP_NOT expresion {
 												if($2.tipo != booleano){
 													printf("error semantico: la expresion (%s) no es de tipo booleano \n",$2.lexema);
@@ -363,7 +368,7 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 											   }
 						| 	expresion OP_OR expresion {
 														if($1.tipo!=$3.tipo)
-															printf("error_semantico: comparación de tipos distintos");
+															printf("error_semantico: comparación de tipos distintos \n");
 													   	else{
 														    if($1.tipo == booleano){
 																$$.tipo = $1.tipo;
@@ -374,7 +379,7 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 													   }
 						|	expresion OP_AND expresion {
 														if($1.tipo != $3.tipo)
-															printf("error semantico: comparación de tipos distintos");
+															printf("error semantico: comparación de tipos distintos \n");
 														else{
 															if($1.tipo == booleano){
 																$$.tipo = $1.tipo;
@@ -385,7 +390,7 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 													   }
 						|	expresion OP_XOR expresion {
 														if($1.tipo != $3.tipo)
-															printf("error semantico: comparación de tipos distintos");
+															printf("error semantico: comparación de tipos distintos \n");
 														else{
 															if($1.tipo == booleano){
 																$$.tipo = $1.tipo;
@@ -395,7 +400,7 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 														}
 													   }
 						|	expresion OP_REL expresion {if($1.tipo != $3.tipo)
-															printf("error semantico: comparación de tipos distintos");
+															printf("error semantico: comparación de tipos distintos \n");
 														else{
 															if($1.tipo == entero || $1.tipo == real){
 																$$.tipo = booleano;
@@ -405,26 +410,39 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 														}}
 						|	expresion OP_IGUALDAD expresion {
 																if($1.tipo != $3.tipo)
-																	printf("errror semantico: comparación de tipos 	distintos");
+																	printf("errror semantico: comparación de tipos 	distintos \n");
 																else{
 																	if($1.tipo == entero || $1.tipo == real){
 																		$$.tipo = booleano;
 																	}
-																	else
-																		printf("error semantico: las expresiones deben ser numeros \n");
+																	else{
+																		printf("error semantico: las expresiones %s y %s deben ser numeros \n", $1.lexema, $3.lexema);
+																		printf("ahora mismo son de tipo %s y %s \n",$1.tipo,$3.tipo);
+																	}
 																}
 															}
-						|	expresion OP_MULT expresion
+						|	expresion OP_MULT expresion {
+															if($1.tipo != $3.tipo)
+																printf("errror semantico: multiplicación de tipos 	distintos \n");
+															else{
+																if($1.tipo == array){
+																	int pos1 = buscar_ambito(variable,$1.lexema);
+																	int pos2 = buscar_ambito(variable,$3.lexema);
+																	if(TS[pos1].TamDimen2 != TS[pos2].TamDimen1)
+																		printf("Las dimensiones de las matrices no concuerdan \n");
+																}
+															}
+														}
 						| 	expresion MASMENOS expresion {
 															if($1.tipo != $3.tipo)
-																printf("errror semantico: comparación de tipos 	distintos");
+																printf("errror semantico: comparación de tipos 	distintos \n");
 															else{
-																if($1.tipo == entero)
-																	$$.tipo = entero;
-																if($1.tipo == real)
-																	$$.tipo = real;
-																else
-																	printf("error semantico: las expresiones deben ser numeros \n");
+																if($1.tipo == entero || $1.tipo == real)
+																	$$.tipo = $1.tipo;
+																else{
+																	printf("error semantico: las expresiones %s y %s deben ser numeros \n", $1.lexema, $3.lexema);
+																	printf("ahora mismo son de tipo %s y %s \n",$1.tipo,$3.tipo);
+																}
 															}
 														 }
 						|	Array_exp
@@ -438,13 +456,19 @@ Agregados 				:	INICIO_BLOQUE argumentos FIN_BLOQUE	;
 Constante				:   CONSTANTE 
 							{
 								$$.lexema=yylval.lexema;
-								if($1.tipo==real)
+								if(yylval.lexema=="verdadero" || yylval.lexema=="falso")
+									$$.tipo=booleano;
+								else if(yylval.tipo==caracter)
+									$$.tipo=caracter;
+								else if(yylval.tipo==real)
 									$$.tipo=real;
 								else	
 									$$.tipo=caracter;
+								printf("la constante %s tiene tipo: %u",yylval.lexema,yylval.tipo);
 							} 
 						
-						| 	NATURAL	{$$.lexema=yylval.lexema;}	;
+						| 	NATURAL	{$$.lexema=yylval.lexema;
+									 $$.tipo=entero;}	;
 
 %%
 
