@@ -351,8 +351,8 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 									printf("error_semantico: variable %s usada fuera de ambito \n", $1.lexema);
 								}   
 							}
-						| 	Constante {$$.lexema=yylval.lexema;
-									   $$.tipo=yylval.tipo;}
+						| 	Constante {$$.lexema=$1.lexema;
+									   $$.tipo=$1.tipo;}
                         | 	OP_NOT expresion {
 												if($2.tipo != booleano){
 													printf("error semantico: la expresion (%s) no es de tipo booleano \n",$2.lexema);
@@ -455,19 +455,18 @@ Agregados 				:	INICIO_BLOQUE argumentos FIN_BLOQUE	;
 
 Constante				:   CONSTANTE 
 							{
-								$$.lexema=yylval.lexema;
-								if(yylval.lexema=="verdadero" || yylval.lexema=="falso")
+								$$.lexema=$1.lexema;
+								if($1.lexema=="verdadero" || $1.lexema=="falso")
 									$$.tipo=booleano;
-								else if(yylval.tipo==caracter)
+								else if($1.tipo==caracter)
 									$$.tipo=caracter;
-								else if(yylval.tipo==real)
+								else if($1.tipo==real)
 									$$.tipo=real;
 								else	
 									$$.tipo=caracter;
-								printf("la constante %s tiene tipo: %u",yylval.lexema,yylval.tipo);
 							} 
 						
-						| 	NATURAL	{$$.lexema=yylval.lexema;
+						| 	NATURAL	{$$.lexema=$1.lexema;
 									 $$.tipo=entero;}	;
 
 %%
