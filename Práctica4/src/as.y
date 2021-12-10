@@ -94,7 +94,7 @@ Cuerpo_declar_var       :   tipo linea_variables PYC
 
 // Definido para no confundir con <Parametro>
 tipo					:	TIPO {temp=$1.tipo; $$.tipo=$1.tipo;}
-						| error 	;
+						| error  {printf("error semantico: declaración incorrecta de tipo de variable \n");}	;
 
 linea_variables			:	linea_variables COMA variable {$$.param= $$.param+1;}
 						|	variable {$$.param=1;}	;
@@ -105,9 +105,17 @@ variable 				:	ID {
 											dtipo b= temp;
 											entradaTS variable ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
 											int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido
-											if (ind==0) TS_Inserta(variable); // No lo está, lo añado
+											
+											tipoEntrada a2 = parametro_formal;
+											int ind2 = buscar_ambito(a2, $1.lexema); //busco si hay un parametro formal con ese ID
+											
+											if (ind==0) {
+												if(ind2==0)
+													TS_Inserta(variable);   // No lo está, lo añado
+												else
+													printf("error semantico: ya existe un parámetro %s en una funcion \n", $1.lexema);
+											} 
 											else TS[ind]=variable;
-
 
 											}
 
@@ -227,13 +235,13 @@ Ide_exp 				:	ID
 								.nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, 
 								.dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
 								
-								int ind1 = buscar_repetido(a1,$1.lexema);
-								int ind2 = buscar_repetido(a2,$1.lexema);
+								int ind1 = buscar_ambito(a1,$1.lexema);
+								int ind2 = buscar_ambito(a2,$1.lexema);
 								
 								if(ind1 != 0 || ind2 != 0)
 									TS_Inserta(comprob_ambito);
 								else{
-									printf("error_semantico: variable usada fuera de ambito");
+									printf("error_semantico: variable %s usada fuera de ambito \n", $1.lexema);
 								}
 							}
 						
@@ -250,13 +258,13 @@ Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
 								.tipoDato=$1.tipo, .parametros=0, .dimensiones=0,
 								.TamDimen1="0", .TamDimen2="0"};  
 								
-								int ind1 = buscar_repetido(a1,$1.lexema);
-								int ind2 = buscar_repetido(a2,$1.lexema);
+								int ind1 = buscar_ambito(a1,$1.lexema);
+								int ind2 = buscar_ambito(a2,$1.lexema);
 								
 								if(ind1 != 0 || ind2 != 0)
 									TS_Inserta(comprob_ambito);
 								else{
-									printf("error_semantico: variable usada fuera de ambito");
+									printf("error_semantico: variable %s usada fuera de ambito \n", $1.lexema);
 								}
 							}
 			  			
@@ -300,9 +308,9 @@ llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_b
 																			TS_Inserta(llama_proc);
 																		}
 																		else
-																			printf("error Semántico: llamada a funcion con numero incorrecto de argumentos \n");
+																			printf("error Semántico: llamada a funcion %s con numero incorrecto de argumentos \n", $1.lexema);
 																	}else{
-																		printf("error semántico: llamada a función fuera de su ambito \n");
+																		printf("error semántico: llamada a función %s fuera de su ambito \n", $1.lexema);
 																	}
 																}
 						|	ID PARENT_IZQ PARENT_DER PYC {tipoEntrada a_buscar = procedimiento;
@@ -314,9 +322,9 @@ llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_b
 																		if(TS[ind].parametros == 0)
 																			TS_Inserta(llama_proc);
 																		else
-																			printf("error Semántico: llamada a funcion con numero incorrecto de argumentos \n");
+																			printf("error Semántico: llamada a funcion %s con numero incorrecto de argumentos \n", $1.lexema);
 																	}else{
-																		printf("error semántico: llamada a función fuera de su ambito \n");
+																		printf("error semántico: llamada a función %s fuera de su ambito \n",$1.lexema);
 																	}
 																}
 						|   error   ;
@@ -340,47 +348,85 @@ expresion				:   PARENT_IZQ expresion PARENT_DER
 								}   
 							}
 						| 	Constante {$$.lexema=$1.lexema;$$.tipo=$1.tipo;}
-                        | 	OP_NOT expresion
-						| 	MASMENOS expresion %prec OP_NOT
-						| 	expresion OP_OR expresion {if($1.tipo!=$3.tipo)
+                        | 	OP_NOT expresion {
+												if($2.tipo != booleano){
+													printf("error semantico: la expresion (%s) no es de tipo booleano \n",$2.lexema);
+												}
+											 }
+						| 	MASMENOS expresion {
+												if($2.tipo == entero)
+													$$.tipo = entero;
+												else if($2.tipo == real)
+													$$.tipo = real;
+												else
+													printf("error semantico: la expresion (%s) debe ser numerica \n", $2.lexema);
+											   }
+						| 	expresion OP_OR expresion {
+														if($1.tipo!=$3.tipo)
 															printf("error_semantico: comparación de tipos distintos");
-													   else{
+													   	else{
 														    if($1.tipo == booleano){
 																$$.tipo = $1.tipo;
 															}
-														}}
-						|	expresion OP_AND expresion {if($1.tipo != $3.tipo)
+															else
+																printf("error semantico: las expresiones deben ser booleanas \n");
+														}
+													   }
+						|	expresion OP_AND expresion {
+														if($1.tipo != $3.tipo)
 															printf("error semantico: comparación de tipos distintos");
 														else{
 															if($1.tipo == booleano){
 																$$.tipo = $1.tipo;
 															}
-														}}
-						|	expresion OP_XOR expresion {if($1.tipo != $3.tipo)
+															else	
+																printf("error semantico: las expresiones comparadas deben ser booleanas \n");
+														}
+													   }
+						|	expresion OP_XOR expresion {
+														if($1.tipo != $3.tipo)
 															printf("error semantico: comparación de tipos distintos");
 														else{
 															if($1.tipo == booleano){
 																$$.tipo = $1.tipo;
 															}
-														}}
+															else
+																printf("error semantico: las expresiones comparadas deben ser booleanas \n");
+														}
+													   }
 						|	expresion OP_REL expresion {if($1.tipo != $3.tipo)
 															printf("error semantico: comparación de tipos distintos");
 														else{
 															if($1.tipo == entero || $1.tipo == real){
 																$$.tipo = booleano;
 															}else{
-																printf("error semantico: tipo incorrecto, no se estan comparando cifras \n");
+																printf("error semantico: las expresiones comparadas deben ser cifras \n");
 															}
 														}}
-						|	expresion OP_IGUALDAD expresion {if($1.tipo != $3.tipo)
-																printf("errror semantico: comparación de tipos distintos");
-															else{
-																if($1.tipo == entero || $1.tipo == real){
-																	$$.tipo = booleano;
+						|	expresion OP_IGUALDAD expresion {
+																if($1.tipo != $3.tipo)
+																	printf("errror semantico: comparación de tipos 	distintos");
+																else{
+																	if($1.tipo == entero || $1.tipo == real){
+																		$$.tipo = booleano;
+																	}
+																	else
+																		printf("error semantico: las expresiones deben ser numeros \n");
 																}
-															}}
+															}
 						|	expresion OP_MULT expresion
-						| 	expresion MASMENOS expresion
+						| 	expresion MASMENOS expresion {
+															if($1.tipo != $3.tipo)
+																printf("errror semantico: comparación de tipos 	distintos");
+															else{
+																if($1.tipo == entero)
+																	$$.tipo = entero;
+																if($1.tipo == real)
+																	$$.tipo = real;
+																else
+																	printf("error semantico: las expresiones deben ser numeros \n");
+															}
+														 }
 						|	Array_exp
 						|	Agregados
 						| 	error	;

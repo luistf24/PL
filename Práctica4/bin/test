@@ -4,12 +4,12 @@ Principal
     {
     	var
     		int x, y, z;
-    		double x, y, z, a;
-    		char c, c[2];
+    		double x, y, z;
+    		char l, l[2];
     		bool d;
 
-    		int a[5];
-    		double b[2, 10];
+    		int n[5];
+    		double m[2, 10];
     		char c[2,8];
     		bool d[z];
     	endvar

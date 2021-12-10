@@ -36,13 +36,13 @@ int TS_Inserta(entradaTS elem){
 	TOPE+=1;
 	TS[TOPE]=elem;
 
-	//imprimir_tabla();
-	return TOPE
+	imprimir_tabla();
+	return TOPE;
 }
 
 int TS_VaciarEntrada(){
 	if(TOPE>0) TOPE-=1;
-	//imprimir_tabla();
+	imprimir_tabla();
 	return TOPE;
 }
 
