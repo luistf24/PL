@@ -258,7 +258,7 @@ Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
 									printf("error semantico: tipo de dato para indice erroneo, se espera entero \n");
 								
 								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema,
-								.tipoDato=$1.tipo, .parametros=0, .dimensiones=0,
+								.tipoDato=array, .parametros=0, .dimensiones=0,
 								.TamDimen1="0", .TamDimen2="0"};  
 								
 								int ind1 = buscar_ambito(a1,$1.lexema);
@@ -308,7 +308,25 @@ llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_b
 																	int ind = buscar_ambito(a_buscar,$1.lexema);
 																	if(ind!=0){
 																		if(TS[ind].parametros == $3.param){
-																			TS_Inserta(llama_proc);
+																			int contador = 0;
+																			int tip_correcto = 1;
+																			tipoEntrada c = parametro_formal;
+																			int ind2 = buscar_ambito(a_buscar,$1.lexema);
+
+																			while(contador <= $3.param && tip_correcto==1){
+																				printf("%s || %s tip_corr: %i\n", TS[ind2+contador+1].nombre, TS[TOPE-$3.param+1+contador].nombre, tip_correcto);
+																				if(TS[ind2+contador].tipoDato == TS[TOPE-$3.param+contador].tipoDato){
+																					printf("beep\n");
+																					tip_correcto=1;
+																				}
+																				else
+																					tip_correcto=0;
+																				contador++;
+																			}
+																			if(tip_correcto==1)
+																				TS_Inserta(llama_proc);
+																			else
+																				printf("error semantico: el tipo de los parametros de la llamada a función no coincide con la cabecera \n");
 																		}
 																		else
 																			printf("error Semántico: llamada a funcion %s con numero incorrecto de argumentos \n", $1.lexema);
@@ -338,8 +356,8 @@ argumentos              :   argumentos COMA expresion {$$.param = 1 + $1.param +
 expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 						| 	ID
 							{
-								$$.lexema=yylval.lexema;
-								$$.tipo=yylval.tipo;
+								$$.lexema=$1.lexema;
+								$$.tipo=$1.tipo;
 								tipoEntrada a1 = variable;
 								tipoEntrada a2 = parametro_formal;
 								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
