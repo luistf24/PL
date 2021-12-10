@@ -391,7 +391,7 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 								}   
 							}
 						| 	Constante {$$.lexema=$1.lexema;
-									   $$.tipo=$1.tipo;}
+									   $$.tipo=yylval.tipo;}
                         | 	OP_NOT expresion {
 												if($2.tipo != booleano){
 													printf("error semantico: la expresion (%s) no es de tipo booleano \n",$2.lexema);
@@ -505,7 +505,7 @@ Constante				:   CONSTANTE
 									$$.tipo=caracter;
 							} 
 						
-						| 	NATURAL	{$$.lexema=$1.lexema;
+						| 	NATURAL	{$$.lexema=yylval.lexema;
 									 $$.tipo=entero;}	;
 
 %%
