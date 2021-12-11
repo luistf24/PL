@@ -60,21 +60,21 @@ dtipo temp=no_asignado;
 
 Principal             	:   PRINCIPAL bloque 	;
 
-bloque 					:   INICIO_BLOQUE 
+bloque 					:   INICIO_BLOQUE
 							{
 								tipoEntrada a=marca;
 								dtipo b = desconocido;
-								entradaTS marca = {.entrada=a, .nombre="marca", .tipoDato=b, 
+								entradaTS marca = {.entrada=a, .nombre="marca", .tipoDato=b,
 								.parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
 
 								TS_Inserta(marca);
-							} 
-							
-							Declar_de_var_locales	
-							Declar_de_subprogs 
+							}
+
+							Declar_de_var_locales
+							Declar_de_subprogs
 							Resto_bloque	;
 
-Resto_bloque			:	Sentencias 
+Resto_bloque			:	Sentencias
 							FIN_BLOQUE { TS_VaciarBloque();}
 						|	FIN_BLOQUE { TS_VaciarBloque();}	;
 
@@ -84,17 +84,23 @@ Declar_de_var_locales   :   MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR
 Variables_locales 	    :   Variables_locales Cuerpo_declar_var
 						| 	Cuerpo_declar_var 	;
 
-Cuerpo_declar_var       :   tipo linea_variables PYC 
+Cuerpo_declar_var       :   tipo linea_variables PYC
 							{
-								for(int i=0; i<$2.param;i++)
+								int variables=$2.param;
+								int aux=variables;
+								for(int i=0; i<variables;i++)
+									if(strcmp($1.lexema,"nulo")==0)
+										variables-=1;
+								for(int i=0; i<variables;i++)
 									TS[TOPE-i].tipoDato=$1.tipo;
 							}
-						
+
 						|	tipo linea_variables error 	;
 
 // Definido para no confundir con <Parametro>
 tipo					:	TIPO {temp=$1.tipo; $$.tipo=$1.tipo;}
-						| error  {printf("error semantico [Linea %d]: declaración incorrecta de tipo de variable \n",linea_actual);}	;
+						| error  {printf("error semantico [Linea %d]: declaración incorrecta de tipo de variable \n",linea_actual);
+											$$.lexema=="nulo";}	;
 
 linea_variables			:	linea_variables COMA variable {$$.param= $$.param+1;}
 						|	variable {$$.param=1;}	;
@@ -105,16 +111,16 @@ variable 				:	ID {
 											dtipo b= temp;
 											entradaTS variable ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
 											int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido
-											
+
 											tipoEntrada a2 = parametro_formal;
 											int ind2 = buscar_ambito(a2, $1.lexema); //busco si hay un parametro formal con ese ID
-											
+
 											if (ind==0) {
 												if(ind2==0)
 													TS_Inserta(variable);   // No lo está, lo añado
 												else
 													printf("error semantico [Linea %d]: ya existe un parámetro %s en una funcion \n",linea_actual, $1.lexema);
-											} 
+											}
 											else TS[ind]=variable;
 
 											}
@@ -122,21 +128,21 @@ variable 				:	ID {
 						| Array ;
 
 Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER {
-																tipoEntrada a =variable;		
-																dtipo b= array;							
+																tipoEntrada a =variable;
+																dtipo b= array;
 																entradaTS variable ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=1,.TamDimen1=$3.lexema,.TamDimen2="0"};
-																int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido	
+																int ind = buscar_repetido(a, $1.lexema); //busco si esta repetido
 
 																tipoEntrada a2 = parametro_formal;
 																int ind2 = buscar_ambito(a2,$1.lexema);
 
 																if (ind==0){
 																	if(ind2==0)
-																		TS_Inserta(variable); // No lo está, lo añado	
+																		TS_Inserta(variable); // No lo está, lo añado
 																	else
 																		printf("error semantico [Linea %d]: ya existe un parámetro %s en una funcion \n",linea_actual, $1.lexema);
-																} 
-																else TS[ind]=variable;		
+																}
+																else TS[ind]=variable;
 						}
 
 						|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER {
@@ -150,12 +156,12 @@ Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER {
 
 																if (ind==0){
 																	if(ind2==0)
-																		TS_Inserta(variable); // No lo está, lo añado	
+																		TS_Inserta(variable); // No lo está, lo añado
 																	else
 																		printf("error semantico [Linea %d]: ya existe un parámetro %s en una funcion \n",linea_actual, $1.lexema);
 																}
-																else 
-																	TS[ind]=variable;								
+																else
+																	TS[ind]=variable;
 							};
 
 Identificadores		    :   Identificadores COMA ID
@@ -165,17 +171,17 @@ Identificadores		    :   Identificadores COMA ID
 Declar_de_subprogs 	    :   Declar_de_subprogs Declar_subprog
 						|	;
 
-Declar_subprog          : 	PROCEDIMIENTO ID 
+Declar_subprog          : 	PROCEDIMIENTO ID
 							{
 								tipoEntrada a = procedimiento;
 								dtipo b = desconocido;
-								entradaTS procedimiento = {.entrada=a, .nombre=yylval.lexema, 
+								entradaTS procedimiento = {.entrada=a, .nombre=yylval.lexema,
 								.tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
 								TS_Inserta(procedimiento);
 
-							} 
+							}
 
-							PARENT_IZQ Parametros  
+							PARENT_IZQ Parametros
 							{
 								int ind = buscar_repetido(procedimiento, $2.lexema);
 								TS[ind].parametros=$5.param;
@@ -192,29 +198,29 @@ Parametro				:   TIPO ID
 								entradaTS param_form = {.entrada=parametro_formal,
 								.nombre=$2.lexema	, .tipoDato = $1.tipo, .parametros=0,.
 								dimensiones=0, .TamDimen1=0,	.TamDimen2="0"};
-								
+
 								TS_Inserta(param_form);
 							}
-						
-						|	TIPO ID CORCHETE_IZQ CORCHETE_DER 
-							{
-								entradaTS param_form = {.entrada=parametro_formal, 
-								.nombre=$2.lexema, .tipoDato = $1.tipo, .parametros=0, 
-								.dimensiones=1, .TamDimen1="desc", .TamDimen2="desc"};
-								
-								TS_Inserta(param_form);
-							}
-						
+
 						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
-							CORCHETE_IZQ CORCHETE_DER 
 							{
-								entradaTS param_form = {.entrada=parametro_formal, 
-								.nombre=$2.lexema, .tipoDato = $1.tipo, .parametros=0, 
-								.dimensiones=2, .TamDimen1="desc", .TamDimen2="desc"};
-								
+								entradaTS param_form = {.entrada=parametro_formal,
+								.nombre=$2.lexema, .tipoDato = $1.tipo, .parametros=0,
+								.dimensiones=1, .TamDimen1="desc", .TamDimen2="desc"};
+
 								TS_Inserta(param_form);
 							}
-						
+
+						|	TIPO ID CORCHETE_IZQ CORCHETE_DER
+							CORCHETE_IZQ CORCHETE_DER
+							{
+								entradaTS param_form = {.entrada=parametro_formal,
+								.nombre=$2.lexema, .tipoDato = $1.tipo, .parametros=0,
+								.dimensiones=2, .TamDimen1="desc", .TamDimen2="desc"};
+
+								TS_Inserta(param_form);
+							}
+
 						|	error	;
 
 Sentencias 			    :   Sentencias Sentencia
@@ -237,34 +243,35 @@ sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC {
 								}else{
 									printf("error semantico [Linea %d]: intento de asignación entre tipos distintos",linea_actual);
 								}
-								
+
 								TS_Inserta(asignacion);
 							} ;
 
-Ide_exp 				:	ID 
+Ide_exp 				:	ID
 							{
 								$$.tipo = $1.tipo;
 								tipoEntrada a1 = variable;
 								tipoEntrada a2 = parametro_formal;
-								
-								entradaTS comprob_ambito = {.entrada=compr_ambito, 
-								.nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, 
-								.dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
-								
+
+								entradaTS comprob_ambito = {.entrada=compr_ambito,
+								.nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0,
+								.dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
+
 								int ind1 = buscar_ambito(a1,$1.lexema);
 								int ind2 = buscar_ambito(a2,$1.lexema);
-								
+
 								if(ind1 != 0 || ind2 != 0)
-									TS_Inserta(comprob_ambito);
+								    printf(" ");
+								//	TS_Inserta(comprob_ambito);
 								else{
-									printf("error_semantico: variable %s usada fuera de ambito \n",linea_actual, $1.lexema);
+									printf("error_semantico %i: variable %s usada fuera de ambito \n",linea_actual, $1.lexema);
 								}
 							}
-						
+
 						| 	Array_exp 	{$$.tipo = $1.tipo;};
 
 
-Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER  
+Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
 							{
 								$$.tipo = $1.tipo;
 								tipoEntrada a1 = variable;
@@ -272,21 +279,22 @@ Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
 
 								if($3.tipo != entero)
 									printf("error semantico [Linea %d]: tipo de dato para indice erroneo, se espera entero \n",linea_actual);
-								
+
 								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema,
 								.tipoDato=array, .parametros=0, .dimensiones=0,
-								.TamDimen1="0", .TamDimen2="0"};  
-								
+								.TamDimen1="0", .TamDimen2="0"};
+
 								int ind1 = buscar_ambito(a1,$1.lexema);
 								int ind2 = buscar_ambito(a2,$1.lexema);
-								
+
 								if(ind1 != 0 || ind2 != 0)
-									TS_Inserta(comprob_ambito);
+										printf(" ");
+							//		TS_Inserta(comprob_ambito);
 								else{
 									printf("error_semantico: variable %s usada fuera de ambito \n",linea_actual, $1.lexema);
 								}
 							}
-			  			
+
 			  			|	ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
 			  				{
 			  					$$.tipo = $1.tipo;
@@ -296,11 +304,11 @@ Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
 sentencia_si			:   si
 						|	si SINO Sentencia 	;
 
-si 						:	SI PARENT_IZQ expresion PARENT_DER ENTONCES Sentencia {if($3.tipo != booleano) 
+si 						:	SI PARENT_IZQ expresion PARENT_DER ENTONCES Sentencia {if($3.tipo != booleano)
 																					printf("error semantico [Linea %d]: la expresion condicional no es de tipo booleano \n",linea_actual);
 																					}	;
 
-sentencia_mientras		:   MIENTRAS PARENT_IZQ expresion PARENT_DER Sentencia {if($3.tipo != booleano) 
+sentencia_mientras		:   MIENTRAS PARENT_IZQ expresion PARENT_DER Sentencia {if($3.tipo != booleano)
 																				printf("error semantico [Linea %d]: la expresion condicional no es de tipo booleano \n",linea_actual);
 																				}	;
 
@@ -317,22 +325,27 @@ lista_exp_cadena 		: 	lista_exp_cadena COMA exp_cadena
 
 exp_cadena 				: 	expresion | CADENA 	;
 
-llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_buscar = procedimiento;
+llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {
+																	tipoEntrada a_buscar = procedimiento;
 																	tipoEntrada a = llamada_proc;
 																	dtipo b = desconocido;
 																	entradaTS llama_proc ={.entrada=a, .nombre=$1.lexema, .tipoDato=b, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
-																	int ind = buscar_ambito(a_buscar,$1.lexema);
+																	printf("beep\n");
+																	int ind = buscar_repetido(a_buscar,$1.lexema);
+																	printf("%i\n", ind);
 																	if(ind!=0){
+																		printf("beep\n");
 																		if(TS[ind].parametros == $3.param){
+																			printf("beep2\n");
 																			int contador = 0;
 																			int tip_correcto = 1;
 																			tipoEntrada c = parametro_formal;
-																			int ind2 = buscar_ambito(a_buscar,$1.lexema);
+																			int ind2 = buscar_repetido(a_buscar,$1.lexema);
 
 																			while(contador < $3.param && tip_correcto==1){
 																				//printf("%s || %s tip_corr: %i\n", TS[ind2+contador+1].nombre, TS[TOPE-$3.param+1+contador].nombre, tip_correcto);
-																				if(TS[ind2+contador+1].tipoDato == TS[TOPE-$3.param+contador+1].tipoDato){
-																					//printf("beep\n");
+																				if(TS[ind2+contador].tipoDato == TS[TOPE-$3.param+contador].tipoDato){
+																					printf("beep\n");
 																					tip_correcto=1;
 																				}
 																				else
@@ -345,10 +358,12 @@ llamada_proced		    :   ID PARENT_IZQ argumentos PARENT_DER PYC {tipoEntrada a_b
 																				printf("error semantico [Linea %d]: el tipo de los parametros de la llamada a función no coincide con la cabecera \n",linea_actual);
 																		}
 																		else
-																			printf("error Semántico: llamada a funcion %s con numero incorrecto de argumentos \n",linea_actual, $1.lexema);
+																			printf("error Semántico [Linea %d]: llamada a funcion %s con numero incorrecto de argumentos \n",linea_actual, $1.lexema);
 																	}else{
-																		printf("error semántico: llamada a función %s fuera de su ambito \n",linea_actual, $1.lexema);
+																		printf("Llego hasta aqui/n");
+																		printf("error semántico [Linea %d]: llamada a función %s fuera de su ambito \n",linea_actual, $1.lexema);
 																	}
+																	printf("Llego hasta aqui");
 																}
 						|	ID PARENT_IZQ PARENT_DER PYC {tipoEntrada a_buscar = procedimiento;
 																	tipoEntrada a = llamada_proc;
@@ -372,11 +387,13 @@ argumentos              :   argumentos COMA expresion {$$.param = 1 + $1.param +
 expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 						| 	ID
 							{
+
+
 								$$.lexema=$1.lexema;
 								$$.tipo=$1.tipo;
 								tipoEntrada a1 = variable;
 								tipoEntrada a2 = parametro_formal;
-								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};  
+								entradaTS comprob_ambito = {.entrada=compr_ambito, .nombre=$1.lexema, .tipoDato=$1.tipo, .parametros=0, .dimensiones=0, .TamDimen1="0", .TamDimen2="0"};
 								int ind1 = buscar_ambito(a1,$1.lexema);
 								int ind2 = buscar_ambito(a2,$1.lexema);
 								if(ind1 != 0 || ind2 != 0){
@@ -384,11 +401,11 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 										comprob_ambito.tipoDato = TS[ind1].tipoDato;
 									else if(ind2!=0)
 										comprob_ambito.tipoDato = TS[ind2].tipoDato;
-									TS_Inserta(comprob_ambito);
+								//	TS_Inserta(comprob_ambito);
 								}
 								else{
-									printf("error_semantico: variable %s usada fuera de ambito \n",linea_actual, $1.lexema);
-								}   
+									printf("error_semantico [Linea %i]: variable %s usada fuera de ambito \n",linea_actual, $1.lexema);
+								}
 							}
 						| 	Constante {$$.lexema=$1.lexema;
 									   $$.tipo=yylval.tipo;}
@@ -423,7 +440,7 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 															if($1.tipo == booleano){
 																$$.tipo = $1.tipo;
 															}
-															else	
+															else
 																printf("error semantico [Linea %d]: las expresiones comparadas deben ser booleanas \n",linea_actual);
 														}
 													   }
@@ -448,6 +465,8 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 															}
 														}}
 						|	expresion OP_IGUALDAD expresion {
+
+
 																if($1.tipo != $3.tipo)
 																	printf("error semantico[Linea %d]: comparación de tipos 	distintos \n",linea_actual);
 																else{
@@ -456,13 +475,15 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 																	}
 																	else{
 																		printf("error semantico [Linea %d]: las expresiones %s y %s deben ser numeros \n",linea_actual, $1.lexema, $3.lexema);
-																		printf("ahora mismo son de tipo %s y %s \n",$1.tipo,$3.tipo);
+																	//	printf("ahora mismo son de tipo %s y %s \n",$1.tipo,$3.tipo);
 																	}
 																}
 															}
 						|	expresion OP_MULT expresion {
+															 
 															if($1.tipo != $3.tipo)
-																printf("error semantico[Linea %d]: multiplicación de tipos 	distintos \n",linea_actual);
+																printf("error semantico[Linea %i]: multiplicación de tipos 	distintos \n",linea_actual);
+
 															else{
 																if($1.tipo == array){
 																	int pos1 = buscar_ambito(variable,$1.lexema);
@@ -473,6 +494,8 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 															}
 														}
 						| 	expresion MASMENOS expresion {
+
+
 															if($1.tipo != $3.tipo)
 																printf("error semantico [Linea %d]: comparación de tipos 	distintos \n",linea_actual);
 															else{
@@ -480,19 +503,19 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 																	$$.tipo = $1.tipo;
 																else{
 																	printf("error semantico [Linea %d]: las expresiones %s y %s deben ser numeros \n",linea_actual, $1.lexema, $3.lexema);
-																	printf("ahora mismo son de tipo %s y %s \n",$1.tipo,$3.tipo);
+																	//printf("ahora mismo son de tipo %s y %s \n",$1.tipo,$3.tipo);
 																}
 															}
 														 }
 						|	Array_exp
 						|	Agregados
-						| 	error	;
+						| 	error	{ };
 
 Agregados 				:	INICIO_BLOQUE argumentos FIN_BLOQUE	;
 						|	INICIO_BLOQUE argumentos PYC
 							argumentos FIN_BLOQUE ;
 
-Constante				:   CONSTANTE 
+Constante				:   CONSTANTE
 							{
 								$$.lexema=$1.lexema;
 								if($1.lexema=="verdadero" || $1.lexema=="falso")
@@ -501,10 +524,10 @@ Constante				:   CONSTANTE
 									$$.tipo=caracter;
 								else if($1.tipo==real)
 									$$.tipo=real;
-								else	
+								else
 									$$.tipo=caracter;
-							} 
-						
+							}
+
 						| 	NATURAL	{$$.lexema=yylval.lexema;
 									 $$.tipo=entero;}	;
 

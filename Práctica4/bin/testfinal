@@ -52,8 +52,8 @@ Principal
             
         }
     }
-    pe22=pe23**pe32+20;
+    pe22=pe23*pe32;
     pe22=pe32*pe23;
-    vf=pe22;
+    //vf=pe22;
 }
 
