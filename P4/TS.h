@@ -132,6 +132,10 @@ int esArray(atributos e);
 int checkDimensArray(atributos a, atributos b);
 // Comprueba multiplicacion de arrays
 void checkMultArray(atributos a, atributos b, atributos *res);
+// Comprueba arrays y tipos básicos
+int checkTipoArray(dtipo a);
+// Comprueba indices de un array
+int checkIndexArray(int size, atributos b);
 
 // Muestra por pantalla las entradas de la tabla de símbolos
 void printTS();

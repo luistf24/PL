@@ -84,11 +84,17 @@ Principal
                 int index;
             endvar
 
-            index = 0;
+            index = 3;
 
             arr[index] = 10;
         }
+
+        funcionF(p2);
     }
+
+    p2[2] = ve1;
+    p2[0] = p2[1] + p2[2];
+    p2[0] = p2[1] + ve1;
 
     p22 = p2;
     p22 = p23**p32;

@@ -366,8 +366,7 @@ int TSGetId(atributos id)
 		return -1;
 	}
 	
-	else
-		return TS[index].tipoDato;
+	return TS[index].tipoDato;
 }
 
 void TS_FunctionCall(atributos* res)
@@ -405,6 +404,31 @@ int esArray(atributos e)
 		|| e.tipo == array_bool || e.tipo == array_char)
 		return 0;
 	return 1;
+}
+
+int checkIndexArray(int size, atributos ind)
+{
+	int index = atoi(ind.lexema);
+	
+	if(index > size)
+	{
+		printf("[Linea %d] Error semántico: Acceso a Array fuera de rango.\n",
+		linea);
+		return 1;
+	}
+
+	return 0;
+}
+
+int checkTipoArray(dtipo a)
+{
+	if(a == array_int)
+		return entero;
+	else if(a == array_bool)
+		return booleano;
+	else if(a == array_char)
+		return caracter;
+	return real;
 }
 
 int checkDimensArray(atributos a, atributos b)

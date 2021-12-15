@@ -95,9 +95,6 @@ variable 				:	ID
 									$1.atrib = 0;
 									TS_AddVar($1);
 								}
-								//else
-								//	if (decParam == 0)
-								//		TS_GetId($1, &$$);
 							}		
 
 							|	Array ;
@@ -115,10 +112,6 @@ Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER
 										$1.atrib = 1;
 										TS_AddVar($1);
 									}
-									
-									//else
-									//	if (decParam == 0)
-									//		TS_GetId($1, &$$);
 			  					}
 							}
 
@@ -137,10 +130,6 @@ Array 					: 	ID CORCHETE_IZQ expresion CORCHETE_DER
 										$1.atrib = 1;
 										TS_AddVar($1);
 									}
-									
-									//else
-									//	if (decParam == 0)
-									//		TS_GetId($1, &$$);
 			  					}
 							}	
 						;
@@ -165,7 +154,7 @@ Declar_de_subprogs 	    :   Declar_de_subprogs Declar_subprog
 						|	;
 
 Declar_subprog          : 	PROCEDIMIENTO ID 
-							{decParam = 1;} {TS_AddPROC($2);}
+							{decParam = 1; TS_AddPROC($2);}
 							PARENT_IZQ Parametros PARENT_DER 
 							{decParam = 0;} {subProg = 1;} bloque {subProg = 0; } 	;
 
@@ -181,7 +170,7 @@ Parametro 				: 	tipo ID {getType($1); TS_AddParam($2);}
 						
 						|	tipo ID CORCHETE_IZQ CORCHETE_DER
 							CORCHETE_IZQ CORCHETE_DER 
-							{getType($1);}{TS_AddParam($2);}
+							{getType($1); TS_AddParam($2);}
 						;
 
 Sentencias  			: 	Sentencias Sentencia
@@ -198,11 +187,21 @@ Sentencia 			    :   bloque
 
 sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC 
 							{
-								if (TSGetId($1) != $3.tipo)
+								int isArrayIzq = esArray($1);
+								int isArrayDer = esArray($3);
+								dtipo tipo_1 = $1.tipo;
+								dtipo tipo_2 = $3.tipo;
+
+								if (isArrayIzq == 0)
+									tipo_1 = checkTipoArray($1.tipo);
+								if(isArrayDer == 0)
+									tipo_2 = checkTipoArray($3.tipo);
+
+								if(tipo_1 != tipo_2)	
 								printf("[Linea %d] Error semántico: Asignación de tipos desiguales.\n",linea);
 								
-								else if(esArray($1) == 0 
-								&& esArray($3) == 0)
+								else if(isArrayIzq == 0 
+								&& isArrayDer == 0)
 								{
 									int ret = checkDimensArray($1, $3);
 									// Borrar arrayDePaso
@@ -218,17 +217,36 @@ Ide_exp 				:	ID { TS_GetId($1, &$$); }
 Array_exp 				:	ID CORCHETE_IZQ expresion CORCHETE_DER
 							{
 								$$.tipo = $1.tipo;
+								
 								if($3.tipo != entero)
 			  					printf("[Linea %d] Error semántico: Tipo índice array incorrecto.\n",linea);
+			  					
+			  					else
+			  					{
+			  						int pos = TS_FindByID($1);
+									int size = TS[pos].TamDimen1;
+									checkIndexArray(size, $3);
+			  					}
 							}
 			  			
 			  			|	ID CORCHETE_IZQ expresion COMA expresion 
 			  				CORCHETE_DER
 			  				{
 			  					$$.tipo = $1.tipo;
-			  					if($3.tipo != entero && $3.tipo!= $5.tipo)
+
+								if($3.tipo != entero && $5.tipo != entero)
 			  					printf("[Linea %d] Error semántico: Tipo índice array incorrecto.\n",linea);
-							}	;
+			  					
+			  					else
+			  					{
+			  						int pos = TS_FindByID($1);
+									int size = TS[pos].TamDimen1;
+			  						checkIndexArray(size, $3);
+			  						size = TS[pos].TamDimen2;
+			  						checkIndexArray(size, $5);
+			  					}
+							}
+						;
 
 sentencia_si			:   si
 						|	si SINO Sentencia 	;
@@ -337,7 +355,6 @@ expresion				:   PARENT_IZQ expresion
 								if($1.tipo != $3.tipo)
                         			printf("[Linea %d] Error semántico: Expresión no comparable.\n", linea);
                         		else $$.tipo = booleano;
-                        		//printf("TIPO REL: %d\n", $$.tipo);
 							}
 						|	expresion OP_IGUALDAD expresion
 							{
@@ -345,7 +362,6 @@ expresion				:   PARENT_IZQ expresion
 								if($1.tipo != $3.tipo)
                         			printf("[Linea %d] Error semántico: Expresiones de distinto tipo.\n", linea);
                         		else $$.tipo = booleano;
-                        		//printf("TIPO IGUALDAD: %d\n", $$.tipo);
 							}
 						|	expresion OP_MULT expresion
 							{
@@ -373,7 +389,6 @@ expresion				:   PARENT_IZQ expresion
                         		
                         		else 
                         			printf("[Linea %d] Error semántico: Expresiones de tipo inoperable.\n", linea);
-                        		//printf("TIPO MASMENOS: %d\n", $$.tipo);
 							}
 						|	Array_exp {$$.tipo = $1.tipo;}
 						| 	Constante 
