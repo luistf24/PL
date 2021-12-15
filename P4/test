@@ -1,0 +1,97 @@
+Principal
+{
+    var
+    
+        i·nt ve ;
+        int ve1,ve2;
+        double vf ;
+        char vc ;
+        bool vl ;
+        
+        int p22[2,2], p23[2,3], p32[3,2], p33[3, 3];
+        int p2[2];
+    
+    endvar
+
+    procedimiento funcionA (int a1, double a2, char a3)
+    {
+        var
+            int x1, x2, a3 ;
+        endvar   
+
+        procedimiento funcionB (char b1, bool b2)
+        {
+            var
+                double xf, x2 ;
+            endvar
+
+            procedimiento funcionC(bool c1, int c2)
+            {
+                var
+                    double x1;
+                endvar
+                
+                x1 = 1.0;
+                
+                si(c2 > 10) entonces
+                    c2 = c2-1;
+            }
+
+            funcionC(falso, 3);
+        }
+
+        procedimiento funcionD(double d1)
+        {
+            var
+                char dato;
+                int valor;
+            endvar
+
+            procedimiento funcionE(char e1, char e2)
+            {
+                Entrada "Introduce dos caracteres: ", e1, e2;
+
+                si(e1 == 'a') entonces
+                    e2 = 'b';
+                sino 
+                    si (e1 == 'b') entonces
+                        e2 = 'c';
+                    sino
+                        e2 = ' ';
+            }
+
+            Entrada "Introduce un valor entero: ", valor;
+            si(d1 > 0.0) entonces
+            {
+                var
+                    int dato;
+                endvar
+
+                dato = 2;
+                dato = valor*20/dato;
+            }
+
+            sino
+            {
+                valor = valor * 100;
+                d1 = d1 / 1000.0;
+            }
+        }
+
+        procedimiento funcionF(int arr[])
+        {
+            var
+                int index;
+            endvar
+
+            index = 0;
+
+            arr[index] = 10;
+        }
+    }
+
+    p22 = p2;
+    p22 = p23**p32;
+    p22 = p32**p23;
+    vf = p22;
+}
