@@ -27,16 +27,31 @@ typedef struct
 	dtipo tipo;
 	int param;
 	int dim;
+	char *lugar;
+	char *codigo;
 } atributos;
 
 #define YYSTYPE atributos
+
+
+int imprimir_var(entradaTS elem, FILE *fichero){
+	if(elem.dimensiones==0)
+		fprintf(fichero, "%s", elem.nombre);
+
+	else if(elem.dimensiones==1)
+
+		fprintf(fichero, "%s[%s]", elem.nombre, elem.TamDimen1);
+	else if(elem.dimensiones==2)
+			fprintf(fichero, "%s[%s,%s]", elem.nombre, elem.TamDimen1, elem.TamDimen2 );
+	return 0;
+}
 
 int TS_Inserta(entradaTS elem){
 
 	TOPE+=1;
 	TS[TOPE]=elem;
 
-	//imprimir_tabla();
+	imprimir_tabla();
 	return TOPE;
 }
 

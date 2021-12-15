@@ -1,0 +1,10 @@
+Principal
+{
+  var
+    int n, curr;
+  endvar
+
+  Salida "Introduce numero : ";
+  curr=2;
+
+}

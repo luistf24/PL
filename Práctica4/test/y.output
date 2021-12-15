@@ -1,2113 +1,2154 @@
-State 39 conflicts: 1 shift/reduce
+Estado 45 conflictos: 1 desplazamiento/reducción
 
 
-Grammar
+Gramática
 
     0 $accept: Principal $end
 
-    1 Principal: PRINCIPAL bloque
+    1 $@1: %empty
 
-    2 $@1: %empty
+    2 Principal: PRINCIPAL $@1 bloque
 
-    3 bloque: INICIO_BLOQUE $@1 Declar_de_var_locales Declar_de_subprogs Resto_bloque
+    3 $@2: %empty
 
-    4 Resto_bloque: Sentencias FIN_BLOQUE
-    5             | FIN_BLOQUE
+    4 $@3: %empty
 
-    6 Declar_de_var_locales: MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR
-    7                      | %empty
+    5 bloque: INICIO_BLOQUE $@2 Declar_de_var_locales $@3 Declar_de_subprogs Resto_bloque
 
-    8 Variables_locales: Variables_locales Cuerpo_declar_var
-    9                  | Cuerpo_declar_var
+    6 Resto_bloque: Sentencias FIN_BLOQUE
+    7             | FIN_BLOQUE
 
-   10 Cuerpo_declar_var: tipo linea_variables PYC
-   11                  | tipo linea_variables error
+    8 Declar_de_var_locales: MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR
+    9                      | %empty
 
-   12 tipo: TIPO
-   13     | error
+   10 Variables_locales: Variables_locales Cuerpo_declar_var
+   11                  | Cuerpo_declar_var
 
-   14 linea_variables: linea_variables COMA variable
-   15                | variable
+   12 Cuerpo_declar_var: tipo linea_variables PYC
+   13                  | tipo linea_variables error
 
-   16 variable: ID
-   17         | Array
+   14 tipo: TIPO
+   15     | error
 
-   18 Array: ID CORCHETE_IZQ expresion CORCHETE_DER
-   19      | ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
+   16 linea_variables: linea_variables COMA variable
+   17                | variable
 
-   20 Identificadores: Identificadores COMA ID
-   21                | ID
-   22                | error
+   18 variable: ID
+   19         | Array
 
-   23 Declar_de_subprogs: Declar_de_subprogs Declar_subprog
-   24                   | %empty
+   20 Array: ID CORCHETE_IZQ expresion CORCHETE_DER
+   21      | ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
 
-   25 $@2: %empty
+   22 Identificadores: Identificadores COMA ID
+   23                | ID
+   24                | error
 
-   26 $@3: %empty
+   25 Declar_de_subprogs: Declar_de_subprogs Declar_subprog
+   26                   | %empty
 
-   27 Declar_subprog: PROCEDIMIENTO ID $@2 PARENT_IZQ Parametros $@3 PARENT_DER bloque
+   27 $@4: %empty
 
-   28 Parametros: Parametros COMA Parametro
-   29           | Parametro
-   30           | %empty
+   28 $@5: %empty
 
-   31 Parametro: TIPO ID
-   32          | TIPO ID CORCHETE_IZQ CORCHETE_DER
-   33          | TIPO ID CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER
-   34          | error
+   29 $@6: %empty
 
-   35 Sentencias: Sentencias Sentencia
-   36           | Sentencia
+   30 Declar_subprog: PROCEDIMIENTO ID $@4 PARENT_IZQ Parametros $@5 PARENT_DER $@6 bloque
 
-   37 Sentencia: bloque
-   38          | sentencia_asignacion
-   39          | sentencia_si
-   40          | sentencia_mientras
-   41          | sentencia_hacer
-   42          | sentencia_entrada
-   43          | sentencia_salida
-   44          | llamada_proced
+   31 Parametros: Parametros COMA Parametro
+   32           | Parametro
+   33           | %empty
 
-   45 sentencia_asignacion: Ide_exp OP_ASIG expresion PYC
+   34 Parametro: TIPO ID
+   35          | TIPO ID CORCHETE_IZQ CORCHETE_DER
+   36          | TIPO ID CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER
+   37          | error
 
-   46 Ide_exp: ID
-   47        | Array_exp
+   38 Sentencias: Sentencias Sentencia
+   39           | Sentencia
 
-   48 Array_exp: ID CORCHETE_IZQ expresion CORCHETE_DER
-   49          | ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
+   40 Sentencia: bloque
+   41          | sentencia_asignacion
+   42          | sentencia_si
+   43          | sentencia_mientras
+   44          | sentencia_hacer
+   45          | sentencia_entrada
+   46          | sentencia_salida
+   47          | llamada_proced
 
-   50 sentencia_si: si
-   51             | si SINO Sentencia
+   48 sentencia_asignacion: Ide_exp OP_ASIG expresion PYC
 
-   52 si: SI PARENT_IZQ expresion PARENT_DER ENTONCES Sentencia
+   49 Ide_exp: ID
+   50        | Array_exp
 
-   53 sentencia_mientras: MIENTRAS PARENT_IZQ expresion PARENT_DER Sentencia
+   51 Array_exp: ID CORCHETE_IZQ expresion CORCHETE_DER
+   52          | ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
 
-   54 sentencia_hacer: HACER bloque HASTA PARENT_IZQ expresion PARENT_DER PYC
+   53 sentencia_si: si
+   54             | si SINO Sentencia
 
-   55 sentencia_entrada: ENTRADA Identificadores PYC
+   55 si: SI PARENT_IZQ expresion PARENT_DER ENTONCES Sentencia
 
-   56 sentencia_salida: SALIDA lista_exp_cadena PYC
+   56 sentencia_mientras: MIENTRAS PARENT_IZQ expresion PARENT_DER Sentencia
 
-   57 lista_exp_cadena: lista_exp_cadena COMA exp_cadena
-   58                 | exp_cadena
+   57 sentencia_hacer: HACER bloque HASTA PARENT_IZQ expresion PARENT_DER PYC
 
-   59 exp_cadena: expresion
-   60           | CADENA
+   58 sentencia_entrada: ENTRADA Identificadores PYC
 
-   61 llamada_proced: ID PARENT_IZQ argumentos PARENT_DER PYC
-   62               | ID PARENT_IZQ PARENT_DER PYC
-   63               | error
+   59 sentencia_salida: SALIDA lista_exp_cadena PYC
 
-   64 argumentos: argumentos COMA expresion
-   65           | expresion
+   60 lista_exp_cadena: lista_exp_cadena COMA exp_cadena
+   61                 | exp_cadena
 
-   66 expresion: PARENT_IZQ expresion PARENT_DER
-   67          | ID
-   68          | Constante
-   69          | OP_NOT expresion
-   70          | MASMENOS expresion
-   71          | expresion OP_OR expresion
-   72          | expresion OP_AND expresion
-   73          | expresion OP_XOR expresion
-   74          | expresion OP_REL expresion
-   75          | expresion OP_IGUALDAD expresion
-   76          | expresion OP_MULT expresion
-   77          | expresion MASMENOS expresion
-   78          | Array_exp
-   79          | Agregados
-   80          | error
+   62 exp_cadena: expresion
+   63           | CADENA
 
-   81 Agregados: INICIO_BLOQUE argumentos FIN_BLOQUE
-   82          | INICIO_BLOQUE argumentos PYC argumentos FIN_BLOQUE
+   64 llamada_proced: ID PARENT_IZQ argumentos PARENT_DER PYC
+   65               | ID PARENT_IZQ PARENT_DER PYC
+   66               | error
 
-   83 Constante: CONSTANTE
-   84          | NATURAL
+   67 argumentos: argumentos COMA expresion
+   68           | expresion
+
+   69 expresion: PARENT_IZQ expresion PARENT_DER
+   70          | ID
+   71          | Constante
+   72          | OP_NOT expresion
+   73          | MASMENOS expresion
+   74          | expresion OP_OR expresion
+   75          | expresion OP_AND expresion
+   76          | expresion OP_XOR expresion
+   77          | expresion OP_REL expresion
+   78          | expresion OP_IGUALDAD expresion
+   79          | expresion OP_MULT expresion
+   80          | expresion MASMENOS expresion
+   81          | Array_exp
+   82          | Agregados
+   83          | error
+
+   84 Agregados: INICIO_BLOQUE argumentos FIN_BLOQUE
+   85          | INICIO_BLOQUE argumentos PYC argumentos FIN_BLOQUE
+
+   86 Constante: CONSTANTE
+   87          | NATURAL
 
 
-Terminals, with rules where they appear
+Terminales con las reglas donde aparecen
 
 $end (0) 0
-error (256) 11 13 22 34 63 80
-MARCA_INICIO_VAR (258) 6
-MARCA_FIN_VAR (259) 6
-PRINCIPAL (260) 1
-INICIO_BLOQUE (261) 3 81 82
-FIN_BLOQUE (262) 4 5 81 82
-COMA (263) 14 19 20 28 49 57 64
-ID (264) 16 18 19 20 21 27 31 32 33 46 48 49 61 62 67
-TIPO (265) 12 31 32 33
-PROCEDIMIENTO (266) 27
-OP_ASIG (267) 45
-SI (268) 52
-ENTONCES (269) 52
-SINO (270) 51
-MIENTRAS (271) 53
-HACER (272) 54
-HASTA (273) 54
-CONSTANTE (274) 83
-NATURAL (275) 84
-CADENA (276) 60
-ENTRADA (277) 55
-SALIDA (278) 56
-PYC (279) 10 45 54 55 56 61 62 82
-PARENT_IZQ (280) 27 52 53 54 61 62 66
-PARENT_DER (281) 27 52 53 54 61 62 66
-CORCHETE_IZQ (282) 18 19 32 33 48 49
-CORCHETE_DER (283) 18 19 32 33 48 49
-OP_OR (284) 71
-OP_AND (285) 72
-OP_XOR (286) 73
-OP_IGUALDAD (287) 75
-OP_REL (288) 74
-MASMENOS (289) 70 77
-OP_MULT (290) 76
-OP_NOT (291) 69
+error (256) 13 15 24 37 66 83
+MARCA_INICIO_VAR (258) 8
+MARCA_FIN_VAR (259) 8
+PRINCIPAL (260) 2
+INICIO_BLOQUE (261) 5 84 85
+FIN_BLOQUE (262) 6 7 84 85
+COMA (263) 16 21 22 31 52 60 67
+ID (264) 18 20 21 22 23 30 34 35 36 49 51 52 64 65 70
+TIPO (265) 14 34 35 36
+PROCEDIMIENTO (266) 30
+OP_ASIG (267) 48
+SI (268) 55
+ENTONCES (269) 55
+SINO (270) 54
+MIENTRAS (271) 56
+HACER (272) 57
+HASTA (273) 57
+CONSTANTE (274) 86
+NATURAL (275) 87
+CADENA (276) 63
+ENTRADA (277) 58
+SALIDA (278) 59
+PYC (279) 12 48 57 58 59 64 65 85
+PARENT_IZQ (280) 30 55 56 57 64 65 69
+PARENT_DER (281) 30 55 56 57 64 65 69
+CORCHETE_IZQ (282) 20 21 35 36 51 52
+CORCHETE_DER (283) 20 21 35 36 51 52
+OP_OR (284) 74
+OP_AND (285) 75
+OP_XOR (286) 76
+OP_IGUALDAD (287) 78
+OP_REL (288) 77
+MASMENOS (289) 73 80
+OP_MULT (290) 79
+OP_NOT (291) 72
 
 
-Nonterminals, with rules where they appear
+No terminales con las reglas donde aparecen
 
 $accept (37)
-    on left: 0
+    en la izquierda: 0
 Principal (38)
-    on left: 1, on right: 0
-bloque (39)
-    on left: 3, on right: 1 27 37 54
-$@1 (40)
-    on left: 2, on right: 3
-Resto_bloque (41)
-    on left: 4 5, on right: 3
-Declar_de_var_locales (42)
-    on left: 6 7, on right: 3
-Variables_locales (43)
-    on left: 8 9, on right: 6 8
-Cuerpo_declar_var (44)
-    on left: 10 11, on right: 8 9
-tipo (45)
-    on left: 12 13, on right: 10 11
-linea_variables (46)
-    on left: 14 15, on right: 10 11 14
-variable (47)
-    on left: 16 17, on right: 14 15
-Array (48)
-    on left: 18 19, on right: 17
-Identificadores (49)
-    on left: 20 21 22, on right: 20 55
-Declar_de_subprogs (50)
-    on left: 23 24, on right: 3 23
-Declar_subprog (51)
-    on left: 27, on right: 23
-$@2 (52)
-    on left: 25, on right: 27
-$@3 (53)
-    on left: 26, on right: 27
-Parametros (54)
-    on left: 28 29 30, on right: 27 28
-Parametro (55)
-    on left: 31 32 33 34, on right: 28 29
-Sentencias (56)
-    on left: 35 36, on right: 4 35
-Sentencia (57)
-    on left: 37 38 39 40 41 42 43 44, on right: 35 36 51 52 53
-sentencia_asignacion (58)
-    on left: 45, on right: 38
-Ide_exp (59)
-    on left: 46 47, on right: 45
-Array_exp (60)
-    on left: 48 49, on right: 47 78
-sentencia_si (61)
-    on left: 50 51, on right: 39
-si (62)
-    on left: 52, on right: 50 51
-sentencia_mientras (63)
-    on left: 53, on right: 40
-sentencia_hacer (64)
-    on left: 54, on right: 41
-sentencia_entrada (65)
-    on left: 55, on right: 42
-sentencia_salida (66)
-    on left: 56, on right: 43
-lista_exp_cadena (67)
-    on left: 57 58, on right: 56 57
-exp_cadena (68)
-    on left: 59 60, on right: 57 58
-llamada_proced (69)
-    on left: 61 62 63, on right: 44
-argumentos (70)
-    on left: 64 65, on right: 61 64 81 82
-expresion (71)
-    on left: 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80, on right:
-    18 19 45 48 49 52 53 54 59 64 65 66 69 70 71 72 73 74 75 76 77
-Agregados (72)
-    on left: 81 82, on right: 79
-Constante (73)
-    on left: 83 84, on right: 68
+    en la izquierda: 2, en la derecha: 0
+$@1 (39)
+    en la izquierda: 1, en la derecha: 2
+bloque (40)
+    en la izquierda: 5, en la derecha: 2 30 40 57
+$@2 (41)
+    en la izquierda: 3, en la derecha: 5
+$@3 (42)
+    en la izquierda: 4, en la derecha: 5
+Resto_bloque (43)
+    en la izquierda: 6 7, en la derecha: 5
+Declar_de_var_locales (44)
+    en la izquierda: 8 9, en la derecha: 5
+Variables_locales (45)
+    en la izquierda: 10 11, en la derecha: 8 10
+Cuerpo_declar_var (46)
+    en la izquierda: 12 13, en la derecha: 10 11
+tipo (47)
+    en la izquierda: 14 15, en la derecha: 12 13
+linea_variables (48)
+    en la izquierda: 16 17, en la derecha: 12 13 16
+variable (49)
+    en la izquierda: 18 19, en la derecha: 16 17
+Array (50)
+    en la izquierda: 20 21, en la derecha: 19
+Identificadores (51)
+    en la izquierda: 22 23 24, en la derecha: 22 58
+Declar_de_subprogs (52)
+    en la izquierda: 25 26, en la derecha: 5 25
+Declar_subprog (53)
+    en la izquierda: 30, en la derecha: 25
+$@4 (54)
+    en la izquierda: 27, en la derecha: 30
+$@5 (55)
+    en la izquierda: 28, en la derecha: 30
+$@6 (56)
+    en la izquierda: 29, en la derecha: 30
+Parametros (57)
+    en la izquierda: 31 32 33, en la derecha: 30 31
+Parametro (58)
+    en la izquierda: 34 35 36 37, en la derecha: 31 32
+Sentencias (59)
+    en la izquierda: 38 39, en la derecha: 6 38
+Sentencia (60)
+    en la izquierda: 40 41 42 43 44 45 46 47, en la derecha: 38 39
+    54 55 56
+sentencia_asignacion (61)
+    en la izquierda: 48, en la derecha: 41
+Ide_exp (62)
+    en la izquierda: 49 50, en la derecha: 48
+Array_exp (63)
+    en la izquierda: 51 52, en la derecha: 50 81
+sentencia_si (64)
+    en la izquierda: 53 54, en la derecha: 42
+si (65)
+    en la izquierda: 55, en la derecha: 53 54
+sentencia_mientras (66)
+    en la izquierda: 56, en la derecha: 43
+sentencia_hacer (67)
+    en la izquierda: 57, en la derecha: 44
+sentencia_entrada (68)
+    en la izquierda: 58, en la derecha: 45
+sentencia_salida (69)
+    en la izquierda: 59, en la derecha: 46
+lista_exp_cadena (70)
+    en la izquierda: 60 61, en la derecha: 59 60
+exp_cadena (71)
+    en la izquierda: 62 63, en la derecha: 60 61
+llamada_proced (72)
+    en la izquierda: 64 65 66, en la derecha: 47
+argumentos (73)
+    en la izquierda: 67 68, en la derecha: 64 67 84 85
+expresion (74)
+    en la izquierda: 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83,
+    en la derecha: 20 21 48 51 52 55 56 57 62 67 68 69 72 73 74 75
+    76 77 78 79 80
+Agregados (75)
+    en la izquierda: 84 85, en la derecha: 82
+Constante (76)
+    en la izquierda: 86 87, en la derecha: 71
 
 
-State 0
+Estado 0
 
     0 $accept: . Principal $end
 
-    PRINCIPAL  shift, and go to state 1
+    PRINCIPAL  desplazar e ir al estado 1
 
-    Principal  go to state 2
-
-
-State 1
-
-    1 Principal: PRINCIPAL . bloque
-
-    INICIO_BLOQUE  shift, and go to state 3
-
-    bloque  go to state 4
+    Principal  ir al estado 2
 
 
-State 2
+Estado 1
+
+    2 Principal: PRINCIPAL . $@1 bloque
+
+    $default  reduce usando la regla 1 ($@1)
+
+    $@1  ir al estado 3
+
+
+Estado 2
 
     0 $accept: Principal . $end
 
-    $end  shift, and go to state 5
+    $end  desplazar e ir al estado 4
 
 
-State 3
+Estado 3
 
-    3 bloque: INICIO_BLOQUE . $@1 Declar_de_var_locales Declar_de_subprogs Resto_bloque
+    2 Principal: PRINCIPAL $@1 . bloque
 
-    $default  reduce using rule 2 ($@1)
+    INICIO_BLOQUE  desplazar e ir al estado 5
 
-    $@1  go to state 6
-
-
-State 4
-
-    1 Principal: PRINCIPAL bloque .
-
-    $default  reduce using rule 1 (Principal)
+    bloque  ir al estado 6
 
 
-State 5
+Estado 4
 
     0 $accept: Principal $end .
 
-    $default  accept
+    $default  aceptar
 
 
-State 6
+Estado 5
 
-    3 bloque: INICIO_BLOQUE $@1 . Declar_de_var_locales Declar_de_subprogs Resto_bloque
+    5 bloque: INICIO_BLOQUE . $@2 Declar_de_var_locales $@3 Declar_de_subprogs Resto_bloque
 
-    MARCA_INICIO_VAR  shift, and go to state 7
+    $default  reduce usando la regla 3 ($@2)
 
-    $default  reduce using rule 7 (Declar_de_var_locales)
+    $@2  ir al estado 7
 
-    Declar_de_var_locales  go to state 8
 
+Estado 6
 
-State 7
+    2 Principal: PRINCIPAL $@1 bloque .
 
-    6 Declar_de_var_locales: MARCA_INICIO_VAR . Variables_locales MARCA_FIN_VAR
+    $default  reduce usando la regla 2 (Principal)
 
-    error  shift, and go to state 9
-    TIPO   shift, and go to state 10
 
-    Variables_locales  go to state 11
-    Cuerpo_declar_var  go to state 12
-    tipo               go to state 13
+Estado 7
 
+    5 bloque: INICIO_BLOQUE $@2 . Declar_de_var_locales $@3 Declar_de_subprogs Resto_bloque
 
-State 8
+    MARCA_INICIO_VAR  desplazar e ir al estado 8
 
-    3 bloque: INICIO_BLOQUE $@1 Declar_de_var_locales . Declar_de_subprogs Resto_bloque
+    $default  reduce usando la regla 9 (Declar_de_var_locales)
 
-    $default  reduce using rule 24 (Declar_de_subprogs)
+    Declar_de_var_locales  ir al estado 9
 
-    Declar_de_subprogs  go to state 14
 
+Estado 8
 
-State 9
+    8 Declar_de_var_locales: MARCA_INICIO_VAR . Variables_locales MARCA_FIN_VAR
 
-   13 tipo: error .
+    error  desplazar e ir al estado 10
+    TIPO   desplazar e ir al estado 11
 
-    $default  reduce using rule 13 (tipo)
+    Variables_locales  ir al estado 12
+    Cuerpo_declar_var  ir al estado 13
+    tipo               ir al estado 14
 
 
-State 10
+Estado 9
 
-   12 tipo: TIPO .
+    5 bloque: INICIO_BLOQUE $@2 Declar_de_var_locales . $@3 Declar_de_subprogs Resto_bloque
 
-    $default  reduce using rule 12 (tipo)
+    $default  reduce usando la regla 4 ($@3)
 
+    $@3  ir al estado 15
 
-State 11
 
-    6 Declar_de_var_locales: MARCA_INICIO_VAR Variables_locales . MARCA_FIN_VAR
-    8 Variables_locales: Variables_locales . Cuerpo_declar_var
+Estado 10
 
-    error          shift, and go to state 9
-    MARCA_FIN_VAR  shift, and go to state 15
-    TIPO           shift, and go to state 10
+   15 tipo: error .
 
-    Cuerpo_declar_var  go to state 16
-    tipo               go to state 13
+    $default  reduce usando la regla 15 (tipo)
 
 
-State 12
+Estado 11
 
-    9 Variables_locales: Cuerpo_declar_var .
+   14 tipo: TIPO .
 
-    $default  reduce using rule 9 (Variables_locales)
+    $default  reduce usando la regla 14 (tipo)
 
 
-State 13
+Estado 12
 
-   10 Cuerpo_declar_var: tipo . linea_variables PYC
-   11                  | tipo . linea_variables error
+    8 Declar_de_var_locales: MARCA_INICIO_VAR Variables_locales . MARCA_FIN_VAR
+   10 Variables_locales: Variables_locales . Cuerpo_declar_var
 
-    ID  shift, and go to state 17
+    error          desplazar e ir al estado 10
+    MARCA_FIN_VAR  desplazar e ir al estado 16
+    TIPO           desplazar e ir al estado 11
 
-    linea_variables  go to state 18
-    variable         go to state 19
-    Array            go to state 20
+    Cuerpo_declar_var  ir al estado 17
+    tipo               ir al estado 14
 
 
-State 14
+Estado 13
 
-    3 bloque: INICIO_BLOQUE $@1 Declar_de_var_locales Declar_de_subprogs . Resto_bloque
-   23 Declar_de_subprogs: Declar_de_subprogs . Declar_subprog
+   11 Variables_locales: Cuerpo_declar_var .
 
-    error          shift, and go to state 21
-    INICIO_BLOQUE  shift, and go to state 3
-    FIN_BLOQUE     shift, and go to state 22
-    ID             shift, and go to state 23
-    PROCEDIMIENTO  shift, and go to state 24
-    SI             shift, and go to state 25
-    MIENTRAS       shift, and go to state 26
-    HACER          shift, and go to state 27
-    ENTRADA        shift, and go to state 28
-    SALIDA         shift, and go to state 29
+    $default  reduce usando la regla 11 (Variables_locales)
 
-    bloque                go to state 30
-    Resto_bloque          go to state 31
-    Declar_subprog        go to state 32
-    Sentencias            go to state 33
-    Sentencia             go to state 34
-    sentencia_asignacion  go to state 35
-    Ide_exp               go to state 36
-    Array_exp             go to state 37
-    sentencia_si          go to state 38
-    si                    go to state 39
-    sentencia_mientras    go to state 40
-    sentencia_hacer       go to state 41
-    sentencia_entrada     go to state 42
-    sentencia_salida      go to state 43
-    llamada_proced        go to state 44
 
+Estado 14
 
-State 15
+   12 Cuerpo_declar_var: tipo . linea_variables PYC
+   13                  | tipo . linea_variables error
 
-    6 Declar_de_var_locales: MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR .
+    ID  desplazar e ir al estado 18
 
-    $default  reduce using rule 6 (Declar_de_var_locales)
+    linea_variables  ir al estado 19
+    variable         ir al estado 20
+    Array            ir al estado 21
 
 
-State 16
+Estado 15
 
-    8 Variables_locales: Variables_locales Cuerpo_declar_var .
+    5 bloque: INICIO_BLOQUE $@2 Declar_de_var_locales $@3 . Declar_de_subprogs Resto_bloque
 
-    $default  reduce using rule 8 (Variables_locales)
+    $default  reduce usando la regla 26 (Declar_de_subprogs)
 
+    Declar_de_subprogs  ir al estado 22
 
-State 17
 
-   16 variable: ID .
-   18 Array: ID . CORCHETE_IZQ expresion CORCHETE_DER
-   19      | ID . CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
+Estado 16
 
-    CORCHETE_IZQ  shift, and go to state 45
+    8 Declar_de_var_locales: MARCA_INICIO_VAR Variables_locales MARCA_FIN_VAR .
 
-    $default  reduce using rule 16 (variable)
+    $default  reduce usando la regla 8 (Declar_de_var_locales)
 
 
-State 18
+Estado 17
 
-   10 Cuerpo_declar_var: tipo linea_variables . PYC
-   11                  | tipo linea_variables . error
-   14 linea_variables: linea_variables . COMA variable
+   10 Variables_locales: Variables_locales Cuerpo_declar_var .
 
-    error  shift, and go to state 46
-    COMA   shift, and go to state 47
-    PYC    shift, and go to state 48
+    $default  reduce usando la regla 10 (Variables_locales)
 
 
-State 19
+Estado 18
 
-   15 linea_variables: variable .
+   18 variable: ID .
+   20 Array: ID . CORCHETE_IZQ expresion CORCHETE_DER
+   21      | ID . CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
 
-    $default  reduce using rule 15 (linea_variables)
+    CORCHETE_IZQ  desplazar e ir al estado 23
 
+    $default  reduce usando la regla 18 (variable)
 
-State 20
 
-   17 variable: Array .
+Estado 19
 
-    $default  reduce using rule 17 (variable)
+   12 Cuerpo_declar_var: tipo linea_variables . PYC
+   13                  | tipo linea_variables . error
+   16 linea_variables: linea_variables . COMA variable
 
+    error  desplazar e ir al estado 24
+    COMA   desplazar e ir al estado 25
+    PYC    desplazar e ir al estado 26
 
-State 21
 
-   63 llamada_proced: error .
+Estado 20
 
-    $default  reduce using rule 63 (llamada_proced)
+   17 linea_variables: variable .
 
+    $default  reduce usando la regla 17 (linea_variables)
 
-State 22
 
-    5 Resto_bloque: FIN_BLOQUE .
+Estado 21
 
-    $default  reduce using rule 5 (Resto_bloque)
+   19 variable: Array .
 
+    $default  reduce usando la regla 19 (variable)
 
-State 23
 
-   46 Ide_exp: ID .
-   48 Array_exp: ID . CORCHETE_IZQ expresion CORCHETE_DER
-   49          | ID . CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
-   61 llamada_proced: ID . PARENT_IZQ argumentos PARENT_DER PYC
-   62               | ID . PARENT_IZQ PARENT_DER PYC
+Estado 22
 
-    PARENT_IZQ    shift, and go to state 49
-    CORCHETE_IZQ  shift, and go to state 50
+    5 bloque: INICIO_BLOQUE $@2 Declar_de_var_locales $@3 Declar_de_subprogs . Resto_bloque
+   25 Declar_de_subprogs: Declar_de_subprogs . Declar_subprog
 
-    $default  reduce using rule 46 (Ide_exp)
+    error          desplazar e ir al estado 27
+    INICIO_BLOQUE  desplazar e ir al estado 5
+    FIN_BLOQUE     desplazar e ir al estado 28
+    ID             desplazar e ir al estado 29
+    PROCEDIMIENTO  desplazar e ir al estado 30
+    SI             desplazar e ir al estado 31
+    MIENTRAS       desplazar e ir al estado 32
+    HACER          desplazar e ir al estado 33
+    ENTRADA        desplazar e ir al estado 34
+    SALIDA         desplazar e ir al estado 35
 
+    bloque                ir al estado 36
+    Resto_bloque          ir al estado 37
+    Declar_subprog        ir al estado 38
+    Sentencias            ir al estado 39
+    Sentencia             ir al estado 40
+    sentencia_asignacion  ir al estado 41
+    Ide_exp               ir al estado 42
+    Array_exp             ir al estado 43
+    sentencia_si          ir al estado 44
+    si                    ir al estado 45
+    sentencia_mientras    ir al estado 46
+    sentencia_hacer       ir al estado 47
+    sentencia_entrada     ir al estado 48
+    sentencia_salida      ir al estado 49
+    llamada_proced        ir al estado 50
 
-State 24
 
-   27 Declar_subprog: PROCEDIMIENTO . ID $@2 PARENT_IZQ Parametros $@3 PARENT_DER bloque
+Estado 23
 
-    ID  shift, and go to state 51
+   20 Array: ID CORCHETE_IZQ . expresion CORCHETE_DER
+   21      | ID CORCHETE_IZQ . expresion COMA expresion CORCHETE_DER
 
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-State 25
+    Array_exp  ir al estado 59
+    expresion  ir al estado 60
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-   52 si: SI . PARENT_IZQ expresion PARENT_DER ENTONCES Sentencia
 
-    PARENT_IZQ  shift, and go to state 52
+Estado 24
 
+   13 Cuerpo_declar_var: tipo linea_variables error .
 
-State 26
+    $default  reduce usando la regla 13 (Cuerpo_declar_var)
 
-   53 sentencia_mientras: MIENTRAS . PARENT_IZQ expresion PARENT_DER Sentencia
 
-    PARENT_IZQ  shift, and go to state 53
+Estado 25
 
+   16 linea_variables: linea_variables COMA . variable
 
-State 27
+    ID  desplazar e ir al estado 18
 
-   54 sentencia_hacer: HACER . bloque HASTA PARENT_IZQ expresion PARENT_DER PYC
+    variable  ir al estado 63
+    Array     ir al estado 21
 
-    INICIO_BLOQUE  shift, and go to state 3
 
-    bloque  go to state 54
+Estado 26
 
+   12 Cuerpo_declar_var: tipo linea_variables PYC .
 
-State 28
+    $default  reduce usando la regla 12 (Cuerpo_declar_var)
 
-   55 sentencia_entrada: ENTRADA . Identificadores PYC
 
-    error  shift, and go to state 55
-    ID     shift, and go to state 56
+Estado 27
 
-    Identificadores  go to state 57
+   66 llamada_proced: error .
 
+    $default  reduce usando la regla 66 (llamada_proced)
 
-State 29
 
-   56 sentencia_salida: SALIDA . lista_exp_cadena PYC
+Estado 28
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    CADENA         shift, and go to state 63
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+    7 Resto_bloque: FIN_BLOQUE .
 
-    Array_exp         go to state 67
-    lista_exp_cadena  go to state 68
-    exp_cadena        go to state 69
-    expresion         go to state 70
-    Agregados         go to state 71
-    Constante         go to state 72
+    $default  reduce usando la regla 7 (Resto_bloque)
 
 
-State 30
+Estado 29
 
-   37 Sentencia: bloque .
+   49 Ide_exp: ID .
+   51 Array_exp: ID . CORCHETE_IZQ expresion CORCHETE_DER
+   52          | ID . CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
+   64 llamada_proced: ID . PARENT_IZQ argumentos PARENT_DER PYC
+   65               | ID . PARENT_IZQ PARENT_DER PYC
 
-    $default  reduce using rule 37 (Sentencia)
+    PARENT_IZQ    desplazar e ir al estado 64
+    CORCHETE_IZQ  desplazar e ir al estado 65
 
+    $default  reduce usando la regla 49 (Ide_exp)
 
-State 31
 
-    3 bloque: INICIO_BLOQUE $@1 Declar_de_var_locales Declar_de_subprogs Resto_bloque .
+Estado 30
 
-    $default  reduce using rule 3 (bloque)
+   30 Declar_subprog: PROCEDIMIENTO . ID $@4 PARENT_IZQ Parametros $@5 PARENT_DER $@6 bloque
 
+    ID  desplazar e ir al estado 66
 
-State 32
 
-   23 Declar_de_subprogs: Declar_de_subprogs Declar_subprog .
+Estado 31
 
-    $default  reduce using rule 23 (Declar_de_subprogs)
+   55 si: SI . PARENT_IZQ expresion PARENT_DER ENTONCES Sentencia
 
+    PARENT_IZQ  desplazar e ir al estado 67
 
-State 33
 
-    4 Resto_bloque: Sentencias . FIN_BLOQUE
-   35 Sentencias: Sentencias . Sentencia
+Estado 32
 
-    error          shift, and go to state 21
-    INICIO_BLOQUE  shift, and go to state 3
-    FIN_BLOQUE     shift, and go to state 73
-    ID             shift, and go to state 23
-    SI             shift, and go to state 25
-    MIENTRAS       shift, and go to state 26
-    HACER          shift, and go to state 27
-    ENTRADA        shift, and go to state 28
-    SALIDA         shift, and go to state 29
+   56 sentencia_mientras: MIENTRAS . PARENT_IZQ expresion PARENT_DER Sentencia
 
-    bloque                go to state 30
-    Sentencia             go to state 74
-    sentencia_asignacion  go to state 35
-    Ide_exp               go to state 36
-    Array_exp             go to state 37
-    sentencia_si          go to state 38
-    si                    go to state 39
-    sentencia_mientras    go to state 40
-    sentencia_hacer       go to state 41
-    sentencia_entrada     go to state 42
-    sentencia_salida      go to state 43
-    llamada_proced        go to state 44
+    PARENT_IZQ  desplazar e ir al estado 68
 
 
-State 34
+Estado 33
 
-   36 Sentencias: Sentencia .
+   57 sentencia_hacer: HACER . bloque HASTA PARENT_IZQ expresion PARENT_DER PYC
 
-    $default  reduce using rule 36 (Sentencias)
+    INICIO_BLOQUE  desplazar e ir al estado 5
 
+    bloque  ir al estado 69
 
-State 35
 
-   38 Sentencia: sentencia_asignacion .
+Estado 34
 
-    $default  reduce using rule 38 (Sentencia)
+   58 sentencia_entrada: ENTRADA . Identificadores PYC
 
+    error  desplazar e ir al estado 70
+    ID     desplazar e ir al estado 71
 
-State 36
+    Identificadores  ir al estado 72
 
-   45 sentencia_asignacion: Ide_exp . OP_ASIG expresion PYC
 
-    OP_ASIG  shift, and go to state 75
+Estado 35
 
+   59 sentencia_salida: SALIDA . lista_exp_cadena PYC
 
-State 37
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    CADENA         desplazar e ir al estado 73
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-   47 Ide_exp: Array_exp .
+    Array_exp         ir al estado 59
+    lista_exp_cadena  ir al estado 74
+    exp_cadena        ir al estado 75
+    expresion         ir al estado 76
+    Agregados         ir al estado 61
+    Constante         ir al estado 62
 
-    $default  reduce using rule 47 (Ide_exp)
 
+Estado 36
 
-State 38
+   40 Sentencia: bloque .
 
-   39 Sentencia: sentencia_si .
+    $default  reduce usando la regla 40 (Sentencia)
 
-    $default  reduce using rule 39 (Sentencia)
 
+Estado 37
 
-State 39
+    5 bloque: INICIO_BLOQUE $@2 Declar_de_var_locales $@3 Declar_de_subprogs Resto_bloque .
 
-   50 sentencia_si: si .
-   51             | si . SINO Sentencia
+    $default  reduce usando la regla 5 (bloque)
 
-    SINO  shift, and go to state 76
 
-    SINO      [reduce using rule 50 (sentencia_si)]
-    $default  reduce using rule 50 (sentencia_si)
+Estado 38
 
+   25 Declar_de_subprogs: Declar_de_subprogs Declar_subprog .
 
-State 40
+    $default  reduce usando la regla 25 (Declar_de_subprogs)
 
-   40 Sentencia: sentencia_mientras .
 
-    $default  reduce using rule 40 (Sentencia)
+Estado 39
 
+    6 Resto_bloque: Sentencias . FIN_BLOQUE
+   38 Sentencias: Sentencias . Sentencia
 
-State 41
+    error          desplazar e ir al estado 27
+    INICIO_BLOQUE  desplazar e ir al estado 5
+    FIN_BLOQUE     desplazar e ir al estado 77
+    ID             desplazar e ir al estado 29
+    SI             desplazar e ir al estado 31
+    MIENTRAS       desplazar e ir al estado 32
+    HACER          desplazar e ir al estado 33
+    ENTRADA        desplazar e ir al estado 34
+    SALIDA         desplazar e ir al estado 35
 
-   41 Sentencia: sentencia_hacer .
+    bloque                ir al estado 36
+    Sentencia             ir al estado 78
+    sentencia_asignacion  ir al estado 41
+    Ide_exp               ir al estado 42
+    Array_exp             ir al estado 43
+    sentencia_si          ir al estado 44
+    si                    ir al estado 45
+    sentencia_mientras    ir al estado 46
+    sentencia_hacer       ir al estado 47
+    sentencia_entrada     ir al estado 48
+    sentencia_salida      ir al estado 49
+    llamada_proced        ir al estado 50
 
-    $default  reduce using rule 41 (Sentencia)
 
+Estado 40
 
-State 42
+   39 Sentencias: Sentencia .
 
-   42 Sentencia: sentencia_entrada .
+    $default  reduce usando la regla 39 (Sentencias)
 
-    $default  reduce using rule 42 (Sentencia)
 
+Estado 41
 
-State 43
+   41 Sentencia: sentencia_asignacion .
 
-   43 Sentencia: sentencia_salida .
+    $default  reduce usando la regla 41 (Sentencia)
 
-    $default  reduce using rule 43 (Sentencia)
 
+Estado 42
 
-State 44
+   48 sentencia_asignacion: Ide_exp . OP_ASIG expresion PYC
 
-   44 Sentencia: llamada_proced .
+    OP_ASIG  desplazar e ir al estado 79
 
-    $default  reduce using rule 44 (Sentencia)
 
+Estado 43
 
-State 45
+   50 Ide_exp: Array_exp .
 
-   18 Array: ID CORCHETE_IZQ . expresion CORCHETE_DER
-   19      | ID CORCHETE_IZQ . expresion COMA expresion CORCHETE_DER
+    $default  reduce usando la regla 50 (Ide_exp)
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
 
-    Array_exp  go to state 67
-    expresion  go to state 77
-    Agregados  go to state 71
-    Constante  go to state 72
+Estado 44
 
+   42 Sentencia: sentencia_si .
 
-State 46
+    $default  reduce usando la regla 42 (Sentencia)
 
-   11 Cuerpo_declar_var: tipo linea_variables error .
 
-    $default  reduce using rule 11 (Cuerpo_declar_var)
+Estado 45
 
+   53 sentencia_si: si .
+   54             | si . SINO Sentencia
 
-State 47
+    SINO  desplazar e ir al estado 80
 
-   14 linea_variables: linea_variables COMA . variable
+    SINO      [reduce usando la regla 53 (sentencia_si)]
+    $default  reduce usando la regla 53 (sentencia_si)
 
-    ID  shift, and go to state 17
 
-    variable  go to state 78
-    Array     go to state 20
+Estado 46
 
+   43 Sentencia: sentencia_mientras .
 
-State 48
+    $default  reduce usando la regla 43 (Sentencia)
 
-   10 Cuerpo_declar_var: tipo linea_variables PYC .
 
-    $default  reduce using rule 10 (Cuerpo_declar_var)
+Estado 47
 
+   44 Sentencia: sentencia_hacer .
 
-State 49
+    $default  reduce usando la regla 44 (Sentencia)
 
-   61 llamada_proced: ID PARENT_IZQ . argumentos PARENT_DER PYC
-   62               | ID PARENT_IZQ . PARENT_DER PYC
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    PARENT_DER     shift, and go to state 79
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+Estado 48
 
-    Array_exp   go to state 67
-    argumentos  go to state 80
-    expresion   go to state 81
-    Agregados   go to state 71
-    Constante   go to state 72
+   45 Sentencia: sentencia_entrada .
 
+    $default  reduce usando la regla 45 (Sentencia)
 
-State 50
 
-   48 Array_exp: ID CORCHETE_IZQ . expresion CORCHETE_DER
-   49          | ID CORCHETE_IZQ . expresion COMA expresion CORCHETE_DER
+Estado 49
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+   46 Sentencia: sentencia_salida .
 
-    Array_exp  go to state 67
-    expresion  go to state 82
-    Agregados  go to state 71
-    Constante  go to state 72
+    $default  reduce usando la regla 46 (Sentencia)
 
 
-State 51
+Estado 50
 
-   27 Declar_subprog: PROCEDIMIENTO ID . $@2 PARENT_IZQ Parametros $@3 PARENT_DER bloque
+   47 Sentencia: llamada_proced .
 
-    $default  reduce using rule 25 ($@2)
+    $default  reduce usando la regla 47 (Sentencia)
 
-    $@2  go to state 83
 
+Estado 51
 
-State 52
+   83 expresion: error .
 
-   52 si: SI PARENT_IZQ . expresion PARENT_DER ENTONCES Sentencia
+    $default  reduce usando la regla 83 (expresion)
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
 
-    Array_exp  go to state 67
-    expresion  go to state 84
-    Agregados  go to state 71
-    Constante  go to state 72
+Estado 52
 
+   84 Agregados: INICIO_BLOQUE . argumentos FIN_BLOQUE
+   85          | INICIO_BLOQUE . argumentos PYC argumentos FIN_BLOQUE
 
-State 53
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-   53 sentencia_mientras: MIENTRAS PARENT_IZQ . expresion PARENT_DER Sentencia
+    Array_exp   ir al estado 59
+    argumentos  ir al estado 81
+    expresion   ir al estado 82
+    Agregados   ir al estado 61
+    Constante   ir al estado 62
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
 
-    Array_exp  go to state 67
-    expresion  go to state 85
-    Agregados  go to state 71
-    Constante  go to state 72
+Estado 53
 
+   51 Array_exp: ID . CORCHETE_IZQ expresion CORCHETE_DER
+   52          | ID . CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
+   70 expresion: ID .
 
-State 54
+    CORCHETE_IZQ  desplazar e ir al estado 65
 
-   54 sentencia_hacer: HACER bloque . HASTA PARENT_IZQ expresion PARENT_DER PYC
+    $default  reduce usando la regla 70 (expresion)
 
-    HASTA  shift, and go to state 86
 
+Estado 54
 
-State 55
+   86 Constante: CONSTANTE .
 
-   22 Identificadores: error .
+    $default  reduce usando la regla 86 (Constante)
 
-    $default  reduce using rule 22 (Identificadores)
 
+Estado 55
 
-State 56
+   87 Constante: NATURAL .
 
-   21 Identificadores: ID .
+    $default  reduce usando la regla 87 (Constante)
 
-    $default  reduce using rule 21 (Identificadores)
 
+Estado 56
 
-State 57
+   69 expresion: PARENT_IZQ . expresion PARENT_DER
 
-   20 Identificadores: Identificadores . COMA ID
-   55 sentencia_entrada: ENTRADA Identificadores . PYC
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-    COMA  shift, and go to state 87
-    PYC   shift, and go to state 88
+    Array_exp  ir al estado 59
+    expresion  ir al estado 83
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
 
-State 58
+Estado 57
 
-   80 expresion: error .
+   73 expresion: MASMENOS . expresion
 
-    $default  reduce using rule 80 (expresion)
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
+    Array_exp  ir al estado 59
+    expresion  ir al estado 84
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-State 59
 
-   81 Agregados: INICIO_BLOQUE . argumentos FIN_BLOQUE
-   82          | INICIO_BLOQUE . argumentos PYC argumentos FIN_BLOQUE
+Estado 58
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+   72 expresion: OP_NOT . expresion
 
-    Array_exp   go to state 67
-    argumentos  go to state 89
-    expresion   go to state 81
-    Agregados   go to state 71
-    Constante   go to state 72
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
+    Array_exp  ir al estado 59
+    expresion  ir al estado 85
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-State 60
 
-   48 Array_exp: ID . CORCHETE_IZQ expresion CORCHETE_DER
-   49          | ID . CORCHETE_IZQ expresion COMA expresion CORCHETE_DER
-   67 expresion: ID .
+Estado 59
 
-    CORCHETE_IZQ  shift, and go to state 50
+   81 expresion: Array_exp .
 
-    $default  reduce using rule 67 (expresion)
+    $default  reduce usando la regla 81 (expresion)
 
 
-State 61
+Estado 60
 
-   83 Constante: CONSTANTE .
+   20 Array: ID CORCHETE_IZQ expresion . CORCHETE_DER
+   21      | ID CORCHETE_IZQ expresion . COMA expresion CORCHETE_DER
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-    $default  reduce using rule 83 (Constante)
+    COMA          desplazar e ir al estado 86
+    CORCHETE_DER  desplazar e ir al estado 87
+    OP_OR         desplazar e ir al estado 88
+    OP_AND        desplazar e ir al estado 89
+    OP_XOR        desplazar e ir al estado 90
+    OP_IGUALDAD   desplazar e ir al estado 91
+    OP_REL        desplazar e ir al estado 92
+    MASMENOS      desplazar e ir al estado 93
+    OP_MULT       desplazar e ir al estado 94
 
 
-State 62
+Estado 61
 
-   84 Constante: NATURAL .
+   82 expresion: Agregados .
 
-    $default  reduce using rule 84 (Constante)
+    $default  reduce usando la regla 82 (expresion)
 
 
-State 63
+Estado 62
 
-   60 exp_cadena: CADENA .
+   71 expresion: Constante .
 
-    $default  reduce using rule 60 (exp_cadena)
+    $default  reduce usando la regla 71 (expresion)
 
 
-State 64
+Estado 63
 
-   66 expresion: PARENT_IZQ . expresion PARENT_DER
+   16 linea_variables: linea_variables COMA variable .
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+    $default  reduce usando la regla 16 (linea_variables)
 
-    Array_exp  go to state 67
-    expresion  go to state 90
-    Agregados  go to state 71
-    Constante  go to state 72
 
+Estado 64
 
-State 65
+   64 llamada_proced: ID PARENT_IZQ . argumentos PARENT_DER PYC
+   65               | ID PARENT_IZQ . PARENT_DER PYC
 
-   70 expresion: MASMENOS . expresion
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    PARENT_DER     desplazar e ir al estado 95
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+    Array_exp   ir al estado 59
+    argumentos  ir al estado 96
+    expresion   ir al estado 82
+    Agregados   ir al estado 61
+    Constante   ir al estado 62
 
-    Array_exp  go to state 67
-    expresion  go to state 91
-    Agregados  go to state 71
-    Constante  go to state 72
 
+Estado 65
 
-State 66
+   51 Array_exp: ID CORCHETE_IZQ . expresion CORCHETE_DER
+   52          | ID CORCHETE_IZQ . expresion COMA expresion CORCHETE_DER
 
-   69 expresion: OP_NOT . expresion
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+    Array_exp  ir al estado 59
+    expresion  ir al estado 97
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-    Array_exp  go to state 67
-    expresion  go to state 92
-    Agregados  go to state 71
-    Constante  go to state 72
 
+Estado 66
 
-State 67
+   30 Declar_subprog: PROCEDIMIENTO ID . $@4 PARENT_IZQ Parametros $@5 PARENT_DER $@6 bloque
 
-   78 expresion: Array_exp .
+    $default  reduce usando la regla 27 ($@4)
 
-    $default  reduce using rule 78 (expresion)
+    $@4  ir al estado 98
 
 
-State 68
+Estado 67
 
-   56 sentencia_salida: SALIDA lista_exp_cadena . PYC
-   57 lista_exp_cadena: lista_exp_cadena . COMA exp_cadena
+   55 si: SI PARENT_IZQ . expresion PARENT_DER ENTONCES Sentencia
 
-    COMA  shift, and go to state 93
-    PYC   shift, and go to state 94
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
+    Array_exp  ir al estado 59
+    expresion  ir al estado 99
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-State 69
 
-   58 lista_exp_cadena: exp_cadena .
+Estado 68
 
-    $default  reduce using rule 58 (lista_exp_cadena)
+   56 sentencia_mientras: MIENTRAS PARENT_IZQ . expresion PARENT_DER Sentencia
 
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-State 70
+    Array_exp  ir al estado 59
+    expresion  ir al estado 100
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-   59 exp_cadena: expresion .
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
 
-    OP_OR        shift, and go to state 95
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+Estado 69
 
-    $default  reduce using rule 59 (exp_cadena)
+   57 sentencia_hacer: HACER bloque . HASTA PARENT_IZQ expresion PARENT_DER PYC
 
+    HASTA  desplazar e ir al estado 101
 
-State 71
 
-   79 expresion: Agregados .
+Estado 70
 
-    $default  reduce using rule 79 (expresion)
+   24 Identificadores: error .
 
+    $default  reduce usando la regla 24 (Identificadores)
 
-State 72
 
-   68 expresion: Constante .
+Estado 71
 
-    $default  reduce using rule 68 (expresion)
+   23 Identificadores: ID .
 
+    $default  reduce usando la regla 23 (Identificadores)
 
-State 73
 
-    4 Resto_bloque: Sentencias FIN_BLOQUE .
+Estado 72
 
-    $default  reduce using rule 4 (Resto_bloque)
+   22 Identificadores: Identificadores . COMA ID
+   58 sentencia_entrada: ENTRADA Identificadores . PYC
 
+    COMA  desplazar e ir al estado 102
+    PYC   desplazar e ir al estado 103
 
-State 74
 
-   35 Sentencias: Sentencias Sentencia .
+Estado 73
 
-    $default  reduce using rule 35 (Sentencias)
+   63 exp_cadena: CADENA .
 
+    $default  reduce usando la regla 63 (exp_cadena)
 
-State 75
 
-   45 sentencia_asignacion: Ide_exp OP_ASIG . expresion PYC
+Estado 74
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+   59 sentencia_salida: SALIDA lista_exp_cadena . PYC
+   60 lista_exp_cadena: lista_exp_cadena . COMA exp_cadena
 
-    Array_exp  go to state 67
-    expresion  go to state 102
-    Agregados  go to state 71
-    Constante  go to state 72
+    COMA  desplazar e ir al estado 104
+    PYC   desplazar e ir al estado 105
 
 
-State 76
+Estado 75
 
-   51 sentencia_si: si SINO . Sentencia
+   61 lista_exp_cadena: exp_cadena .
 
-    error          shift, and go to state 21
-    INICIO_BLOQUE  shift, and go to state 3
-    ID             shift, and go to state 23
-    SI             shift, and go to state 25
-    MIENTRAS       shift, and go to state 26
-    HACER          shift, and go to state 27
-    ENTRADA        shift, and go to state 28
-    SALIDA         shift, and go to state 29
+    $default  reduce usando la regla 61 (lista_exp_cadena)
 
-    bloque                go to state 30
-    Sentencia             go to state 103
-    sentencia_asignacion  go to state 35
-    Ide_exp               go to state 36
-    Array_exp             go to state 37
-    sentencia_si          go to state 38
-    si                    go to state 39
-    sentencia_mientras    go to state 40
-    sentencia_hacer       go to state 41
-    sentencia_entrada     go to state 42
-    sentencia_salida      go to state 43
-    llamada_proced        go to state 44
 
+Estado 76
 
-State 77
+   62 exp_cadena: expresion .
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-   18 Array: ID CORCHETE_IZQ expresion . CORCHETE_DER
-   19      | ID CORCHETE_IZQ expresion . COMA expresion CORCHETE_DER
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+    OP_OR        desplazar e ir al estado 88
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-    COMA          shift, and go to state 104
-    CORCHETE_DER  shift, and go to state 105
-    OP_OR         shift, and go to state 95
-    OP_AND        shift, and go to state 96
-    OP_XOR        shift, and go to state 97
-    OP_IGUALDAD   shift, and go to state 98
-    OP_REL        shift, and go to state 99
-    MASMENOS      shift, and go to state 100
-    OP_MULT       shift, and go to state 101
+    $default  reduce usando la regla 62 (exp_cadena)
 
 
-State 78
+Estado 77
 
-   14 linea_variables: linea_variables COMA variable .
+    6 Resto_bloque: Sentencias FIN_BLOQUE .
 
-    $default  reduce using rule 14 (linea_variables)
+    $default  reduce usando la regla 6 (Resto_bloque)
 
 
-State 79
+Estado 78
 
-   62 llamada_proced: ID PARENT_IZQ PARENT_DER . PYC
+   38 Sentencias: Sentencias Sentencia .
 
-    PYC  shift, and go to state 106
+    $default  reduce usando la regla 38 (Sentencias)
 
 
-State 80
+Estado 79
 
-   61 llamada_proced: ID PARENT_IZQ argumentos . PARENT_DER PYC
-   64 argumentos: argumentos . COMA expresion
+   48 sentencia_asignacion: Ide_exp OP_ASIG . expresion PYC
 
-    COMA        shift, and go to state 107
-    PARENT_DER  shift, and go to state 108
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
+    Array_exp  ir al estado 59
+    expresion  ir al estado 106
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-State 81
 
-   65 argumentos: expresion .
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+Estado 80
 
-    OP_OR        shift, and go to state 95
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+   54 sentencia_si: si SINO . Sentencia
 
-    $default  reduce using rule 65 (argumentos)
+    error          desplazar e ir al estado 27
+    INICIO_BLOQUE  desplazar e ir al estado 5
+    ID             desplazar e ir al estado 29
+    SI             desplazar e ir al estado 31
+    MIENTRAS       desplazar e ir al estado 32
+    HACER          desplazar e ir al estado 33
+    ENTRADA        desplazar e ir al estado 34
+    SALIDA         desplazar e ir al estado 35
 
+    bloque                ir al estado 36
+    Sentencia             ir al estado 107
+    sentencia_asignacion  ir al estado 41
+    Ide_exp               ir al estado 42
+    Array_exp             ir al estado 43
+    sentencia_si          ir al estado 44
+    si                    ir al estado 45
+    sentencia_mientras    ir al estado 46
+    sentencia_hacer       ir al estado 47
+    sentencia_entrada     ir al estado 48
+    sentencia_salida      ir al estado 49
+    llamada_proced        ir al estado 50
 
-State 82
 
-   48 Array_exp: ID CORCHETE_IZQ expresion . CORCHETE_DER
-   49          | ID CORCHETE_IZQ expresion . COMA expresion CORCHETE_DER
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+Estado 81
 
-    COMA          shift, and go to state 109
-    CORCHETE_DER  shift, and go to state 110
-    OP_OR         shift, and go to state 95
-    OP_AND        shift, and go to state 96
-    OP_XOR        shift, and go to state 97
-    OP_IGUALDAD   shift, and go to state 98
-    OP_REL        shift, and go to state 99
-    MASMENOS      shift, and go to state 100
-    OP_MULT       shift, and go to state 101
+   67 argumentos: argumentos . COMA expresion
+   84 Agregados: INICIO_BLOQUE argumentos . FIN_BLOQUE
+   85          | INICIO_BLOQUE argumentos . PYC argumentos FIN_BLOQUE
 
+    FIN_BLOQUE  desplazar e ir al estado 108
+    COMA        desplazar e ir al estado 109
+    PYC         desplazar e ir al estado 110
 
-State 83
 
-   27 Declar_subprog: PROCEDIMIENTO ID $@2 . PARENT_IZQ Parametros $@3 PARENT_DER bloque
+Estado 82
 
-    PARENT_IZQ  shift, and go to state 111
+   68 argumentos: expresion .
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
+    OP_OR        desplazar e ir al estado 88
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-State 84
+    $default  reduce usando la regla 68 (argumentos)
 
-   52 si: SI PARENT_IZQ expresion . PARENT_DER ENTONCES Sentencia
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
 
-    PARENT_DER   shift, and go to state 112
-    OP_OR        shift, and go to state 95
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+Estado 83
 
+   69 expresion: PARENT_IZQ expresion . PARENT_DER
+   74          | expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-State 85
+    PARENT_DER   desplazar e ir al estado 111
+    OP_OR        desplazar e ir al estado 88
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-   53 sentencia_mientras: MIENTRAS PARENT_IZQ expresion . PARENT_DER Sentencia
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
 
-    PARENT_DER   shift, and go to state 113
-    OP_OR        shift, and go to state 95
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+Estado 84
 
+   73 expresion: MASMENOS expresion .
+   74          | expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-State 86
+    OP_MULT  desplazar e ir al estado 94
 
-   54 sentencia_hacer: HACER bloque HASTA . PARENT_IZQ expresion PARENT_DER PYC
+    $default  reduce usando la regla 73 (expresion)
 
-    PARENT_IZQ  shift, and go to state 114
 
+Estado 85
 
-State 87
+   72 expresion: OP_NOT expresion .
+   74          | expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-   20 Identificadores: Identificadores COMA . ID
+    $default  reduce usando la regla 72 (expresion)
 
-    ID  shift, and go to state 115
 
+Estado 86
 
-State 88
+   21 Array: ID CORCHETE_IZQ expresion COMA . expresion CORCHETE_DER
 
-   55 sentencia_entrada: ENTRADA Identificadores PYC .
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-    $default  reduce using rule 55 (sentencia_entrada)
+    Array_exp  ir al estado 59
+    expresion  ir al estado 112
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
 
-State 89
+Estado 87
 
-   64 argumentos: argumentos . COMA expresion
-   81 Agregados: INICIO_BLOQUE argumentos . FIN_BLOQUE
-   82          | INICIO_BLOQUE argumentos . PYC argumentos FIN_BLOQUE
+   20 Array: ID CORCHETE_IZQ expresion CORCHETE_DER .
 
-    FIN_BLOQUE  shift, and go to state 116
-    COMA        shift, and go to state 107
-    PYC         shift, and go to state 117
+    $default  reduce usando la regla 20 (Array)
 
 
-State 90
+Estado 88
 
-   66 expresion: PARENT_IZQ expresion . PARENT_DER
-   71          | expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+   74 expresion: expresion OP_OR . expresion
 
-    PARENT_DER   shift, and go to state 118
-    OP_OR        shift, and go to state 95
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
+    Array_exp  ir al estado 59
+    expresion  ir al estado 113
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-State 91
 
-   70 expresion: MASMENOS expresion .
-   71          | expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+Estado 89
 
-    OP_MULT  shift, and go to state 101
+   75 expresion: expresion OP_AND . expresion
 
-    $default  reduce using rule 70 (expresion)
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
+    Array_exp  ir al estado 59
+    expresion  ir al estado 114
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-State 92
 
-   69 expresion: OP_NOT expresion .
-   71          | expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+Estado 90
 
-    $default  reduce using rule 69 (expresion)
+   76 expresion: expresion OP_XOR . expresion
 
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-State 93
+    Array_exp  ir al estado 59
+    expresion  ir al estado 115
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-   57 lista_exp_cadena: lista_exp_cadena COMA . exp_cadena
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    CADENA         shift, and go to state 63
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+Estado 91
 
-    Array_exp   go to state 67
-    exp_cadena  go to state 119
-    expresion   go to state 70
-    Agregados   go to state 71
-    Constante   go to state 72
+   78 expresion: expresion OP_IGUALDAD . expresion
 
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-State 94
+    Array_exp  ir al estado 59
+    expresion  ir al estado 116
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-   56 sentencia_salida: SALIDA lista_exp_cadena PYC .
 
-    $default  reduce using rule 56 (sentencia_salida)
+Estado 92
 
+   77 expresion: expresion OP_REL . expresion
 
-State 95
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-   71 expresion: expresion OP_OR . expresion
+    Array_exp  ir al estado 59
+    expresion  ir al estado 117
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
 
-    Array_exp  go to state 67
-    expresion  go to state 120
-    Agregados  go to state 71
-    Constante  go to state 72
+Estado 93
 
+   80 expresion: expresion MASMENOS . expresion
 
-State 96
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-   72 expresion: expresion OP_AND . expresion
+    Array_exp  ir al estado 59
+    expresion  ir al estado 118
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
 
-    Array_exp  go to state 67
-    expresion  go to state 121
-    Agregados  go to state 71
-    Constante  go to state 72
+Estado 94
 
+   79 expresion: expresion OP_MULT . expresion
 
-State 97
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-   73 expresion: expresion OP_XOR . expresion
+    Array_exp  ir al estado 59
+    expresion  ir al estado 119
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
 
-    Array_exp  go to state 67
-    expresion  go to state 122
-    Agregados  go to state 71
-    Constante  go to state 72
+Estado 95
 
+   65 llamada_proced: ID PARENT_IZQ PARENT_DER . PYC
 
-State 98
+    PYC  desplazar e ir al estado 120
 
-   75 expresion: expresion OP_IGUALDAD . expresion
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+Estado 96
 
-    Array_exp  go to state 67
-    expresion  go to state 123
-    Agregados  go to state 71
-    Constante  go to state 72
+   64 llamada_proced: ID PARENT_IZQ argumentos . PARENT_DER PYC
+   67 argumentos: argumentos . COMA expresion
 
+    COMA        desplazar e ir al estado 109
+    PARENT_DER  desplazar e ir al estado 121
 
-State 99
 
-   74 expresion: expresion OP_REL . expresion
+Estado 97
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+   51 Array_exp: ID CORCHETE_IZQ expresion . CORCHETE_DER
+   52          | ID CORCHETE_IZQ expresion . COMA expresion CORCHETE_DER
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-    Array_exp  go to state 67
-    expresion  go to state 124
-    Agregados  go to state 71
-    Constante  go to state 72
+    COMA          desplazar e ir al estado 122
+    CORCHETE_DER  desplazar e ir al estado 123
+    OP_OR         desplazar e ir al estado 88
+    OP_AND        desplazar e ir al estado 89
+    OP_XOR        desplazar e ir al estado 90
+    OP_IGUALDAD   desplazar e ir al estado 91
+    OP_REL        desplazar e ir al estado 92
+    MASMENOS      desplazar e ir al estado 93
+    OP_MULT       desplazar e ir al estado 94
 
 
-State 100
+Estado 98
 
-   77 expresion: expresion MASMENOS . expresion
+   30 Declar_subprog: PROCEDIMIENTO ID $@4 . PARENT_IZQ Parametros $@5 PARENT_DER $@6 bloque
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+    PARENT_IZQ  desplazar e ir al estado 124
 
-    Array_exp  go to state 67
-    expresion  go to state 125
-    Agregados  go to state 71
-    Constante  go to state 72
 
+Estado 99
 
-State 101
+   55 si: SI PARENT_IZQ expresion . PARENT_DER ENTONCES Sentencia
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-   76 expresion: expresion OP_MULT . expresion
+    PARENT_DER   desplazar e ir al estado 125
+    OP_OR        desplazar e ir al estado 88
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
 
-    Array_exp  go to state 67
-    expresion  go to state 126
-    Agregados  go to state 71
-    Constante  go to state 72
+Estado 100
 
+   56 sentencia_mientras: MIENTRAS PARENT_IZQ expresion . PARENT_DER Sentencia
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-State 102
+    PARENT_DER   desplazar e ir al estado 126
+    OP_OR        desplazar e ir al estado 88
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-   45 sentencia_asignacion: Ide_exp OP_ASIG expresion . PYC
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
 
-    PYC          shift, and go to state 127
-    OP_OR        shift, and go to state 95
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+Estado 101
 
+   57 sentencia_hacer: HACER bloque HASTA . PARENT_IZQ expresion PARENT_DER PYC
 
-State 103
+    PARENT_IZQ  desplazar e ir al estado 127
 
-   51 sentencia_si: si SINO Sentencia .
 
-    $default  reduce using rule 51 (sentencia_si)
+Estado 102
 
+   22 Identificadores: Identificadores COMA . ID
 
-State 104
+    ID  desplazar e ir al estado 128
 
-   19 Array: ID CORCHETE_IZQ expresion COMA . expresion CORCHETE_DER
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+Estado 103
 
-    Array_exp  go to state 67
-    expresion  go to state 128
-    Agregados  go to state 71
-    Constante  go to state 72
+   58 sentencia_entrada: ENTRADA Identificadores PYC .
 
+    $default  reduce usando la regla 58 (sentencia_entrada)
 
-State 105
 
-   18 Array: ID CORCHETE_IZQ expresion CORCHETE_DER .
+Estado 104
 
-    $default  reduce using rule 18 (Array)
+   60 lista_exp_cadena: lista_exp_cadena COMA . exp_cadena
 
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    CADENA         desplazar e ir al estado 73
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-State 106
+    Array_exp   ir al estado 59
+    exp_cadena  ir al estado 129
+    expresion   ir al estado 76
+    Agregados   ir al estado 61
+    Constante   ir al estado 62
 
-   62 llamada_proced: ID PARENT_IZQ PARENT_DER PYC .
 
-    $default  reduce using rule 62 (llamada_proced)
+Estado 105
 
+   59 sentencia_salida: SALIDA lista_exp_cadena PYC .
 
-State 107
+    $default  reduce usando la regla 59 (sentencia_salida)
 
-   64 argumentos: argumentos COMA . expresion
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+Estado 106
 
-    Array_exp  go to state 67
-    expresion  go to state 129
-    Agregados  go to state 71
-    Constante  go to state 72
+   48 sentencia_asignacion: Ide_exp OP_ASIG expresion . PYC
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
+    PYC          desplazar e ir al estado 130
+    OP_OR        desplazar e ir al estado 88
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-State 108
 
-   61 llamada_proced: ID PARENT_IZQ argumentos PARENT_DER . PYC
+Estado 107
 
-    PYC  shift, and go to state 130
+   54 sentencia_si: si SINO Sentencia .
 
+    $default  reduce usando la regla 54 (sentencia_si)
 
-State 109
 
-   49 Array_exp: ID CORCHETE_IZQ expresion COMA . expresion CORCHETE_DER
+Estado 108
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+   84 Agregados: INICIO_BLOQUE argumentos FIN_BLOQUE .
 
-    Array_exp  go to state 67
-    expresion  go to state 131
-    Agregados  go to state 71
-    Constante  go to state 72
+    $default  reduce usando la regla 84 (Agregados)
 
 
-State 110
+Estado 109
 
-   48 Array_exp: ID CORCHETE_IZQ expresion CORCHETE_DER .
+   67 argumentos: argumentos COMA . expresion
 
-    $default  reduce using rule 48 (Array_exp)
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
+    Array_exp  ir al estado 59
+    expresion  ir al estado 131
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-State 111
 
-   27 Declar_subprog: PROCEDIMIENTO ID $@2 PARENT_IZQ . Parametros $@3 PARENT_DER bloque
+Estado 110
 
-    error  shift, and go to state 132
-    TIPO   shift, and go to state 133
+   85 Agregados: INICIO_BLOQUE argumentos PYC . argumentos FIN_BLOQUE
 
-    COMA        reduce using rule 30 (Parametros)
-    PARENT_DER  reduce using rule 30 (Parametros)
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-    Parametros  go to state 134
-    Parametro   go to state 135
+    Array_exp   ir al estado 59
+    argumentos  ir al estado 132
+    expresion   ir al estado 82
+    Agregados   ir al estado 61
+    Constante   ir al estado 62
 
 
-State 112
+Estado 111
 
-   52 si: SI PARENT_IZQ expresion PARENT_DER . ENTONCES Sentencia
+   69 expresion: PARENT_IZQ expresion PARENT_DER .
 
-    ENTONCES  shift, and go to state 136
+    $default  reduce usando la regla 69 (expresion)
 
 
-State 113
+Estado 112
 
-   53 sentencia_mientras: MIENTRAS PARENT_IZQ expresion PARENT_DER . Sentencia
+   21 Array: ID CORCHETE_IZQ expresion COMA expresion . CORCHETE_DER
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-    error          shift, and go to state 21
-    INICIO_BLOQUE  shift, and go to state 3
-    ID             shift, and go to state 23
-    SI             shift, and go to state 25
-    MIENTRAS       shift, and go to state 26
-    HACER          shift, and go to state 27
-    ENTRADA        shift, and go to state 28
-    SALIDA         shift, and go to state 29
+    CORCHETE_DER  desplazar e ir al estado 133
+    OP_OR         desplazar e ir al estado 88
+    OP_AND        desplazar e ir al estado 89
+    OP_XOR        desplazar e ir al estado 90
+    OP_IGUALDAD   desplazar e ir al estado 91
+    OP_REL        desplazar e ir al estado 92
+    MASMENOS      desplazar e ir al estado 93
+    OP_MULT       desplazar e ir al estado 94
 
-    bloque                go to state 30
-    Sentencia             go to state 137
-    sentencia_asignacion  go to state 35
-    Ide_exp               go to state 36
-    Array_exp             go to state 37
-    sentencia_si          go to state 38
-    si                    go to state 39
-    sentencia_mientras    go to state 40
-    sentencia_hacer       go to state 41
-    sentencia_entrada     go to state 42
-    sentencia_salida      go to state 43
-    llamada_proced        go to state 44
 
+Estado 113
 
-State 114
+   74 expresion: expresion . OP_OR expresion
+   74          | expresion OP_OR expresion .
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-   54 sentencia_hacer: HACER bloque HASTA PARENT_IZQ . expresion PARENT_DER PYC
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+    $default  reduce usando la regla 74 (expresion)
 
-    Array_exp  go to state 67
-    expresion  go to state 138
-    Agregados  go to state 71
-    Constante  go to state 72
 
+Estado 114
 
-State 115
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   75          | expresion OP_AND expresion .
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-   20 Identificadores: Identificadores COMA ID .
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-    $default  reduce using rule 20 (Identificadores)
+    $default  reduce usando la regla 75 (expresion)
 
 
-State 116
+Estado 115
 
-   81 Agregados: INICIO_BLOQUE argumentos FIN_BLOQUE .
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   76          | expresion OP_XOR expresion .
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-    $default  reduce using rule 81 (Agregados)
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
+    $default  reduce usando la regla 76 (expresion)
 
-State 117
 
-   82 Agregados: INICIO_BLOQUE argumentos PYC . argumentos FIN_BLOQUE
+Estado 116
 
-    error          shift, and go to state 58
-    INICIO_BLOQUE  shift, and go to state 59
-    ID             shift, and go to state 60
-    CONSTANTE      shift, and go to state 61
-    NATURAL        shift, and go to state 62
-    PARENT_IZQ     shift, and go to state 64
-    MASMENOS       shift, and go to state 65
-    OP_NOT         shift, and go to state 66
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   78          | expresion OP_IGUALDAD expresion .
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-    Array_exp   go to state 67
-    argumentos  go to state 139
-    expresion   go to state 81
-    Agregados   go to state 71
-    Constante   go to state 72
+    OP_REL    desplazar e ir al estado 92
+    MASMENOS  desplazar e ir al estado 93
+    OP_MULT   desplazar e ir al estado 94
 
+    $default  reduce usando la regla 78 (expresion)
 
-State 118
 
-   66 expresion: PARENT_IZQ expresion PARENT_DER .
+Estado 117
 
-    $default  reduce using rule 66 (expresion)
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   77          | expresion OP_REL expresion .
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
+    MASMENOS  desplazar e ir al estado 93
+    OP_MULT   desplazar e ir al estado 94
 
-State 119
+    $default  reduce usando la regla 77 (expresion)
 
-   57 lista_exp_cadena: lista_exp_cadena COMA exp_cadena .
 
-    $default  reduce using rule 57 (lista_exp_cadena)
+Estado 118
 
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
+   80          | expresion MASMENOS expresion .
 
-State 120
+    OP_MULT  desplazar e ir al estado 94
 
-   71 expresion: expresion . OP_OR expresion
-   71          | expresion OP_OR expresion .
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+    $default  reduce usando la regla 80 (expresion)
 
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
 
-    $default  reduce using rule 71 (expresion)
+Estado 119
 
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   79          | expresion OP_MULT expresion .
+   80          | expresion . MASMENOS expresion
 
-State 121
+    $default  reduce usando la regla 79 (expresion)
 
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   72          | expresion OP_AND expresion .
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
 
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+Estado 120
 
-    $default  reduce using rule 72 (expresion)
+   65 llamada_proced: ID PARENT_IZQ PARENT_DER PYC .
 
+    $default  reduce usando la regla 65 (llamada_proced)
 
-State 122
 
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   73          | expresion OP_XOR expresion .
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+Estado 121
 
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+   64 llamada_proced: ID PARENT_IZQ argumentos PARENT_DER . PYC
 
-    $default  reduce using rule 73 (expresion)
+    PYC  desplazar e ir al estado 134
 
 
-State 123
+Estado 122
 
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   75          | expresion OP_IGUALDAD expresion .
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+   52 Array_exp: ID CORCHETE_IZQ expresion COMA . expresion CORCHETE_DER
 
-    OP_REL    shift, and go to state 99
-    MASMENOS  shift, and go to state 100
-    OP_MULT   shift, and go to state 101
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-    $default  reduce using rule 75 (expresion)
+    Array_exp  ir al estado 59
+    expresion  ir al estado 135
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
 
-State 124
+Estado 123
 
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   74          | expresion OP_REL expresion .
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+   51 Array_exp: ID CORCHETE_IZQ expresion CORCHETE_DER .
 
-    MASMENOS  shift, and go to state 100
-    OP_MULT   shift, and go to state 101
+    $default  reduce usando la regla 51 (Array_exp)
 
-    $default  reduce using rule 74 (expresion)
 
+Estado 124
 
-State 125
+   30 Declar_subprog: PROCEDIMIENTO ID $@4 PARENT_IZQ . Parametros $@5 PARENT_DER $@6 bloque
 
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
-   77          | expresion MASMENOS expresion .
+    error  desplazar e ir al estado 136
+    TIPO   desplazar e ir al estado 137
 
-    OP_MULT  shift, and go to state 101
+    COMA        reduce usando la regla 33 (Parametros)
+    PARENT_DER  reduce usando la regla 33 (Parametros)
 
-    $default  reduce using rule 77 (expresion)
+    Parametros  ir al estado 138
+    Parametro   ir al estado 139
 
 
-State 126
+Estado 125
 
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   76          | expresion OP_MULT expresion .
-   77          | expresion . MASMENOS expresion
+   55 si: SI PARENT_IZQ expresion PARENT_DER . ENTONCES Sentencia
 
-    $default  reduce using rule 76 (expresion)
+    ENTONCES  desplazar e ir al estado 140
 
 
-State 127
+Estado 126
 
-   45 sentencia_asignacion: Ide_exp OP_ASIG expresion PYC .
+   56 sentencia_mientras: MIENTRAS PARENT_IZQ expresion PARENT_DER . Sentencia
 
-    $default  reduce using rule 45 (sentencia_asignacion)
+    error          desplazar e ir al estado 27
+    INICIO_BLOQUE  desplazar e ir al estado 5
+    ID             desplazar e ir al estado 29
+    SI             desplazar e ir al estado 31
+    MIENTRAS       desplazar e ir al estado 32
+    HACER          desplazar e ir al estado 33
+    ENTRADA        desplazar e ir al estado 34
+    SALIDA         desplazar e ir al estado 35
 
+    bloque                ir al estado 36
+    Sentencia             ir al estado 141
+    sentencia_asignacion  ir al estado 41
+    Ide_exp               ir al estado 42
+    Array_exp             ir al estado 43
+    sentencia_si          ir al estado 44
+    si                    ir al estado 45
+    sentencia_mientras    ir al estado 46
+    sentencia_hacer       ir al estado 47
+    sentencia_entrada     ir al estado 48
+    sentencia_salida      ir al estado 49
+    llamada_proced        ir al estado 50
 
-State 128
 
-   19 Array: ID CORCHETE_IZQ expresion COMA expresion . CORCHETE_DER
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+Estado 127
 
-    CORCHETE_DER  shift, and go to state 140
-    OP_OR         shift, and go to state 95
-    OP_AND        shift, and go to state 96
-    OP_XOR        shift, and go to state 97
-    OP_IGUALDAD   shift, and go to state 98
-    OP_REL        shift, and go to state 99
-    MASMENOS      shift, and go to state 100
-    OP_MULT       shift, and go to state 101
+   57 sentencia_hacer: HACER bloque HASTA PARENT_IZQ . expresion PARENT_DER PYC
 
+    error          desplazar e ir al estado 51
+    INICIO_BLOQUE  desplazar e ir al estado 52
+    ID             desplazar e ir al estado 53
+    CONSTANTE      desplazar e ir al estado 54
+    NATURAL        desplazar e ir al estado 55
+    PARENT_IZQ     desplazar e ir al estado 56
+    MASMENOS       desplazar e ir al estado 57
+    OP_NOT         desplazar e ir al estado 58
 
-State 129
+    Array_exp  ir al estado 59
+    expresion  ir al estado 142
+    Agregados  ir al estado 61
+    Constante  ir al estado 62
 
-   64 argumentos: argumentos COMA expresion .
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
 
-    OP_OR        shift, and go to state 95
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
+Estado 128
 
-    $default  reduce using rule 64 (argumentos)
+   22 Identificadores: Identificadores COMA ID .
 
+    $default  reduce usando la regla 22 (Identificadores)
 
-State 130
 
-   61 llamada_proced: ID PARENT_IZQ argumentos PARENT_DER PYC .
+Estado 129
 
-    $default  reduce using rule 61 (llamada_proced)
+   60 lista_exp_cadena: lista_exp_cadena COMA exp_cadena .
 
+    $default  reduce usando la regla 60 (lista_exp_cadena)
 
-State 131
 
-   49 Array_exp: ID CORCHETE_IZQ expresion COMA expresion . CORCHETE_DER
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+Estado 130
 
-    CORCHETE_DER  shift, and go to state 141
-    OP_OR         shift, and go to state 95
-    OP_AND        shift, and go to state 96
-    OP_XOR        shift, and go to state 97
-    OP_IGUALDAD   shift, and go to state 98
-    OP_REL        shift, and go to state 99
-    MASMENOS      shift, and go to state 100
-    OP_MULT       shift, and go to state 101
+   48 sentencia_asignacion: Ide_exp OP_ASIG expresion PYC .
 
+    $default  reduce usando la regla 48 (sentencia_asignacion)
 
-State 132
 
-   34 Parametro: error .
+Estado 131
 
-    $default  reduce using rule 34 (Parametro)
+   67 argumentos: argumentos COMA expresion .
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
+    OP_OR        desplazar e ir al estado 88
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
-State 133
+    $default  reduce usando la regla 67 (argumentos)
 
-   31 Parametro: TIPO . ID
-   32          | TIPO . ID CORCHETE_IZQ CORCHETE_DER
-   33          | TIPO . ID CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER
 
-    ID  shift, and go to state 142
+Estado 132
 
+   67 argumentos: argumentos . COMA expresion
+   85 Agregados: INICIO_BLOQUE argumentos PYC argumentos . FIN_BLOQUE
 
-State 134
+    FIN_BLOQUE  desplazar e ir al estado 143
+    COMA        desplazar e ir al estado 109
 
-   27 Declar_subprog: PROCEDIMIENTO ID $@2 PARENT_IZQ Parametros . $@3 PARENT_DER bloque
-   28 Parametros: Parametros . COMA Parametro
 
-    COMA  shift, and go to state 143
+Estado 133
 
-    $default  reduce using rule 26 ($@3)
+   21 Array: ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER .
 
-    $@3  go to state 144
+    $default  reduce usando la regla 21 (Array)
 
 
-State 135
+Estado 134
 
-   29 Parametros: Parametro .
+   64 llamada_proced: ID PARENT_IZQ argumentos PARENT_DER PYC .
 
-    $default  reduce using rule 29 (Parametros)
+    $default  reduce usando la regla 64 (llamada_proced)
 
 
-State 136
+Estado 135
 
-   52 si: SI PARENT_IZQ expresion PARENT_DER ENTONCES . Sentencia
+   52 Array_exp: ID CORCHETE_IZQ expresion COMA expresion . CORCHETE_DER
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-    error          shift, and go to state 21
-    INICIO_BLOQUE  shift, and go to state 3
-    ID             shift, and go to state 23
-    SI             shift, and go to state 25
-    MIENTRAS       shift, and go to state 26
-    HACER          shift, and go to state 27
-    ENTRADA        shift, and go to state 28
-    SALIDA         shift, and go to state 29
+    CORCHETE_DER  desplazar e ir al estado 144
+    OP_OR         desplazar e ir al estado 88
+    OP_AND        desplazar e ir al estado 89
+    OP_XOR        desplazar e ir al estado 90
+    OP_IGUALDAD   desplazar e ir al estado 91
+    OP_REL        desplazar e ir al estado 92
+    MASMENOS      desplazar e ir al estado 93
+    OP_MULT       desplazar e ir al estado 94
 
-    bloque                go to state 30
-    Sentencia             go to state 145
-    sentencia_asignacion  go to state 35
-    Ide_exp               go to state 36
-    Array_exp             go to state 37
-    sentencia_si          go to state 38
-    si                    go to state 39
-    sentencia_mientras    go to state 40
-    sentencia_hacer       go to state 41
-    sentencia_entrada     go to state 42
-    sentencia_salida      go to state 43
-    llamada_proced        go to state 44
 
+Estado 136
 
-State 137
+   37 Parametro: error .
 
-   53 sentencia_mientras: MIENTRAS PARENT_IZQ expresion PARENT_DER Sentencia .
+    $default  reduce usando la regla 37 (Parametro)
 
-    $default  reduce using rule 53 (sentencia_mientras)
 
+Estado 137
 
-State 138
+   34 Parametro: TIPO . ID
+   35          | TIPO . ID CORCHETE_IZQ CORCHETE_DER
+   36          | TIPO . ID CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER
 
-   54 sentencia_hacer: HACER bloque HASTA PARENT_IZQ expresion . PARENT_DER PYC
-   71 expresion: expresion . OP_OR expresion
-   72          | expresion . OP_AND expresion
-   73          | expresion . OP_XOR expresion
-   74          | expresion . OP_REL expresion
-   75          | expresion . OP_IGUALDAD expresion
-   76          | expresion . OP_MULT expresion
-   77          | expresion . MASMENOS expresion
+    ID  desplazar e ir al estado 145
 
-    PARENT_DER   shift, and go to state 146
-    OP_OR        shift, and go to state 95
-    OP_AND       shift, and go to state 96
-    OP_XOR       shift, and go to state 97
-    OP_IGUALDAD  shift, and go to state 98
-    OP_REL       shift, and go to state 99
-    MASMENOS     shift, and go to state 100
-    OP_MULT      shift, and go to state 101
 
+Estado 138
 
-State 139
+   30 Declar_subprog: PROCEDIMIENTO ID $@4 PARENT_IZQ Parametros . $@5 PARENT_DER $@6 bloque
+   31 Parametros: Parametros . COMA Parametro
 
-   64 argumentos: argumentos . COMA expresion
-   82 Agregados: INICIO_BLOQUE argumentos PYC argumentos . FIN_BLOQUE
+    COMA  desplazar e ir al estado 146
 
-    FIN_BLOQUE  shift, and go to state 147
-    COMA        shift, and go to state 107
+    $default  reduce usando la regla 28 ($@5)
 
+    $@5  ir al estado 147
 
-State 140
 
-   19 Array: ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER .
+Estado 139
 
-    $default  reduce using rule 19 (Array)
+   32 Parametros: Parametro .
 
+    $default  reduce usando la regla 32 (Parametros)
 
-State 141
 
-   49 Array_exp: ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER .
+Estado 140
 
-    $default  reduce using rule 49 (Array_exp)
+   55 si: SI PARENT_IZQ expresion PARENT_DER ENTONCES . Sentencia
 
+    error          desplazar e ir al estado 27
+    INICIO_BLOQUE  desplazar e ir al estado 5
+    ID             desplazar e ir al estado 29
+    SI             desplazar e ir al estado 31
+    MIENTRAS       desplazar e ir al estado 32
+    HACER          desplazar e ir al estado 33
+    ENTRADA        desplazar e ir al estado 34
+    SALIDA         desplazar e ir al estado 35
 
-State 142
+    bloque                ir al estado 36
+    Sentencia             ir al estado 148
+    sentencia_asignacion  ir al estado 41
+    Ide_exp               ir al estado 42
+    Array_exp             ir al estado 43
+    sentencia_si          ir al estado 44
+    si                    ir al estado 45
+    sentencia_mientras    ir al estado 46
+    sentencia_hacer       ir al estado 47
+    sentencia_entrada     ir al estado 48
+    sentencia_salida      ir al estado 49
+    llamada_proced        ir al estado 50
 
-   31 Parametro: TIPO ID .
-   32          | TIPO ID . CORCHETE_IZQ CORCHETE_DER
-   33          | TIPO ID . CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER
 
-    CORCHETE_IZQ  shift, and go to state 148
+Estado 141
 
-    $default  reduce using rule 31 (Parametro)
+   56 sentencia_mientras: MIENTRAS PARENT_IZQ expresion PARENT_DER Sentencia .
 
+    $default  reduce usando la regla 56 (sentencia_mientras)
 
-State 143
 
-   28 Parametros: Parametros COMA . Parametro
+Estado 142
 
-    error  shift, and go to state 132
-    TIPO   shift, and go to state 133
+   57 sentencia_hacer: HACER bloque HASTA PARENT_IZQ expresion . PARENT_DER PYC
+   74 expresion: expresion . OP_OR expresion
+   75          | expresion . OP_AND expresion
+   76          | expresion . OP_XOR expresion
+   77          | expresion . OP_REL expresion
+   78          | expresion . OP_IGUALDAD expresion
+   79          | expresion . OP_MULT expresion
+   80          | expresion . MASMENOS expresion
 
-    Parametro  go to state 149
+    PARENT_DER   desplazar e ir al estado 149
+    OP_OR        desplazar e ir al estado 88
+    OP_AND       desplazar e ir al estado 89
+    OP_XOR       desplazar e ir al estado 90
+    OP_IGUALDAD  desplazar e ir al estado 91
+    OP_REL       desplazar e ir al estado 92
+    MASMENOS     desplazar e ir al estado 93
+    OP_MULT      desplazar e ir al estado 94
 
 
-State 144
+Estado 143
 
-   27 Declar_subprog: PROCEDIMIENTO ID $@2 PARENT_IZQ Parametros $@3 . PARENT_DER bloque
+   85 Agregados: INICIO_BLOQUE argumentos PYC argumentos FIN_BLOQUE .
 
-    PARENT_DER  shift, and go to state 150
+    $default  reduce usando la regla 85 (Agregados)
 
 
-State 145
+Estado 144
 
-   52 si: SI PARENT_IZQ expresion PARENT_DER ENTONCES Sentencia .
+   52 Array_exp: ID CORCHETE_IZQ expresion COMA expresion CORCHETE_DER .
 
-    $default  reduce using rule 52 (si)
+    $default  reduce usando la regla 52 (Array_exp)
 
 
-State 146
+Estado 145
 
-   54 sentencia_hacer: HACER bloque HASTA PARENT_IZQ expresion PARENT_DER . PYC
+   34 Parametro: TIPO ID .
+   35          | TIPO ID . CORCHETE_IZQ CORCHETE_DER
+   36          | TIPO ID . CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER
 
-    PYC  shift, and go to state 151
+    CORCHETE_IZQ  desplazar e ir al estado 150
 
+    $default  reduce usando la regla 34 (Parametro)
 
-State 147
 
-   82 Agregados: INICIO_BLOQUE argumentos PYC argumentos FIN_BLOQUE .
+Estado 146
 
-    $default  reduce using rule 82 (Agregados)
+   31 Parametros: Parametros COMA . Parametro
 
+    error  desplazar e ir al estado 136
+    TIPO   desplazar e ir al estado 137
 
-State 148
+    Parametro  ir al estado 151
 
-   32 Parametro: TIPO ID CORCHETE_IZQ . CORCHETE_DER
-   33          | TIPO ID CORCHETE_IZQ . CORCHETE_DER CORCHETE_IZQ CORCHETE_DER
 
-    CORCHETE_DER  shift, and go to state 152
+Estado 147
 
+   30 Declar_subprog: PROCEDIMIENTO ID $@4 PARENT_IZQ Parametros $@5 . PARENT_DER $@6 bloque
 
-State 149
+    PARENT_DER  desplazar e ir al estado 152
 
-   28 Parametros: Parametros COMA Parametro .
 
-    $default  reduce using rule 28 (Parametros)
+Estado 148
 
+   55 si: SI PARENT_IZQ expresion PARENT_DER ENTONCES Sentencia .
 
-State 150
+    $default  reduce usando la regla 55 (si)
 
-   27 Declar_subprog: PROCEDIMIENTO ID $@2 PARENT_IZQ Parametros $@3 PARENT_DER . bloque
 
-    INICIO_BLOQUE  shift, and go to state 3
+Estado 149
 
-    bloque  go to state 153
+   57 sentencia_hacer: HACER bloque HASTA PARENT_IZQ expresion PARENT_DER . PYC
 
+    PYC  desplazar e ir al estado 153
 
-State 151
 
-   54 sentencia_hacer: HACER bloque HASTA PARENT_IZQ expresion PARENT_DER PYC .
+Estado 150
 
-    $default  reduce using rule 54 (sentencia_hacer)
+   35 Parametro: TIPO ID CORCHETE_IZQ . CORCHETE_DER
+   36          | TIPO ID CORCHETE_IZQ . CORCHETE_DER CORCHETE_IZQ CORCHETE_DER
 
+    CORCHETE_DER  desplazar e ir al estado 154
 
-State 152
 
-   32 Parametro: TIPO ID CORCHETE_IZQ CORCHETE_DER .
-   33          | TIPO ID CORCHETE_IZQ CORCHETE_DER . CORCHETE_IZQ CORCHETE_DER
+Estado 151
 
-    CORCHETE_IZQ  shift, and go to state 154
+   31 Parametros: Parametros COMA Parametro .
 
-    $default  reduce using rule 32 (Parametro)
+    $default  reduce usando la regla 31 (Parametros)
 
 
-State 153
+Estado 152
 
-   27 Declar_subprog: PROCEDIMIENTO ID $@2 PARENT_IZQ Parametros $@3 PARENT_DER bloque .
+   30 Declar_subprog: PROCEDIMIENTO ID $@4 PARENT_IZQ Parametros $@5 PARENT_DER . $@6 bloque
 
-    $default  reduce using rule 27 (Declar_subprog)
+    $default  reduce usando la regla 29 ($@6)
 
+    $@6  ir al estado 155
 
-State 154
 
-   33 Parametro: TIPO ID CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ . CORCHETE_DER
+Estado 153
 
-    CORCHETE_DER  shift, and go to state 155
+   57 sentencia_hacer: HACER bloque HASTA PARENT_IZQ expresion PARENT_DER PYC .
 
+    $default  reduce usando la regla 57 (sentencia_hacer)
 
-State 155
 
-   33 Parametro: TIPO ID CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER .
+Estado 154
 
-    $default  reduce using rule 33 (Parametro)
+   35 Parametro: TIPO ID CORCHETE_IZQ CORCHETE_DER .
+   36          | TIPO ID CORCHETE_IZQ CORCHETE_DER . CORCHETE_IZQ CORCHETE_DER
+
+    CORCHETE_IZQ  desplazar e ir al estado 156
+
+    $default  reduce usando la regla 35 (Parametro)
+
+
+Estado 155
+
+   30 Declar_subprog: PROCEDIMIENTO ID $@4 PARENT_IZQ Parametros $@5 PARENT_DER $@6 . bloque
+
+    INICIO_BLOQUE  desplazar e ir al estado 5
+
+    bloque  ir al estado 157
+
+
+Estado 156
+
+   36 Parametro: TIPO ID CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ . CORCHETE_DER
+
+    CORCHETE_DER  desplazar e ir al estado 158
+
+
+Estado 157
+
+   30 Declar_subprog: PROCEDIMIENTO ID $@4 PARENT_IZQ Parametros $@5 PARENT_DER $@6 bloque .
+
+    $default  reduce usando la regla 30 (Declar_subprog)
+
+
+Estado 158
+
+   36 Parametro: TIPO ID CORCHETE_IZQ CORCHETE_DER CORCHETE_IZQ CORCHETE_DER .
+
+    $default  reduce usando la regla 36 (Parametro)
