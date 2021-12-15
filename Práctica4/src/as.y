@@ -274,7 +274,7 @@ Sentencia 			    :   bloque
 						| 	sentencia_mientras
 						|	sentencia_hacer
 						|	sentencia_entrada
-						| 	sentencia_salida
+						| 	sentencia_salida {fprintf(fichero, "printf( %s ); \n\t", $1.codigo);}
 						| 	llamada_proced 	;
 
 sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC {
@@ -288,7 +288,6 @@ sentencia_asignacion	:   Ide_exp OP_ASIG expresion PYC {
 								char codigo[255];
 								strcpy(codigo, $1.lexema);
 								strcat(codigo, "=");
-								strcat(codigo, $3.lexema);
 								strcat(codigo, $3.codigo);
 								$$.codigo=codigo;
 
@@ -373,12 +372,13 @@ sentencia_hacer			:   HACER bloque HASTA PARENT_IZQ expresion PARENT_DER PYC {if
 
 sentencia_entrada 		: 	ENTRADA Identificadores PYC	;
 
-sentencia_salida 		: 	SALIDA lista_exp_cadena PYC {fprintf(fichero, "printf(\" %s \"); \n", $2.codigo);}	;
+sentencia_salida 		: 	SALIDA lista_exp_cadena PYC {$$.codigo=$2.codigo;}	;
 
 lista_exp_cadena 		: 	lista_exp_cadena COMA exp_cadena{
 																													char codigo[300];
-																													strcpy(codigo, $3.codigo);
-																													strcat(codigo, $1.codigo);
+																													strcpy(codigo, $1.codigo);
+																													strcat(codigo, ", ");
+																													strcat(codigo, $3.codigo);
 																													$$.codigo=codigo;
 																												}
 						|	exp_cadena {char buffer[255];
@@ -466,17 +466,23 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 								else{
 									printf("error_semantico [Linea %i]: variable %s usada fuera de ambito \n",linea_actual, $1.lexema);
 								}
-								$$.codigo=" ";
+								$$.codigo=$1.lexema;
 							}
 						| 	Constante {$$.lexema=$1.lexema;
 									   $$.tipo=yylval.tipo;
-										 $$.codigo="";
+										 $$.codigo=$1.lexema;
 										 }
                         | 	OP_NOT expresion {
 												if($2.tipo != booleano){
 													printf("error semantico [Linea %d]: la expresion (%s) no es de tipo booleano \n",linea_actual,$2.lexema);
 												}
-												$$.codigo=" ";
+												char *var=temporal(), *codigo;
+												codigo="int ";
+												strcat(codigo, var);
+												strcat(codigo, ";\n");
+												strcat(codigo, $1.lexema);
+												strcat(codigo, $2.codigo);
+												$$.codigo=codigo;
 											 }
 						| 	MASMENOS expresion {
 												if($2.tipo == entero)
@@ -485,8 +491,14 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 													$$.tipo = real;
 												else
 													printf("error semantico [Linea %d]: la expresion (%s) debe ser numerica \n",linea_actual, $2.lexema);
-												$$.codigo=" ";
-											   }
+												char *var=temporal(), *codigo;
+												codigo="int ";
+												strcat(codigo, var);
+												strcat(codigo, ";\n");
+												strcat(codigo, $1.lexema);
+												strcat(codigo, $2.codigo);
+												$$.codigo=codigo;
+										   }
 						| 	expresion OP_OR expresion {
 														if($1.tipo!=$3.tipo)
 															printf("error_semantico[Linea %d]: comparación de tipos distintos \n",linea_actual);
@@ -497,7 +509,14 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 															else
 																printf("error semantico [Linea %d]: las expresiones deben ser booleanas \n",linea_actual);
 														}
-														$$.codigo=" ";
+														char *var=temporal(), *codigo;
+														codigo="int ";
+														strcat(codigo, var);
+														strcat(codigo, ";\n");
+														strcat(codigo, $1.codigo);
+														strcat(codigo, $2.lexema);
+														strcat(codigo, $3.codigo);
+														$$.codigo=codigo;
 													   }
 						|	expresion OP_AND expresion {
 														if($1.tipo != $3.tipo)
@@ -509,7 +528,14 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 															else
 																printf("error semantico [Linea %d]: las expresiones comparadas deben ser booleanas \n",linea_actual);
 														}
-														$$.codigo=" ";
+														char *var=temporal(), *codigo;
+														codigo="int ";
+														strcat(codigo, var);
+														strcat(codigo, ";\n");
+														strcat(codigo, $1.codigo);
+														strcat(codigo, $2.lexema);
+														strcat(codigo, $3.codigo);
+														$$.codigo=codigo;
 													   }
 						|	expresion OP_XOR expresion {
 														if($1.tipo != $3.tipo)
@@ -521,9 +547,17 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 															else
 																printf("error semantico [Linea %d]: las expresiones comparadas deben ser booleanas \n",linea_actual);
 														}
-														$$.codigo=" ";
+														char *var=temporal(), *codigo;
+														codigo="int ";
+														strcat(codigo, var);
+														strcat(codigo, ";\n");
+														strcat(codigo, $1.codigo);
+														strcat(codigo, $2.lexema);
+														strcat(codigo, $3.codigo);
+														$$.codigo=codigo;
 													   }
-						|	expresion OP_REL expresion {if($1.tipo != $3.tipo)
+						|	expresion OP_REL expresion {
+														if($1.tipo != $3.tipo)
 															printf("error semantico [Linea %d]: comparación de tipos distintos \n",linea_actual);
 														else{
 															if($1.tipo == entero || $1.tipo == real){
@@ -532,7 +566,14 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 																printf("error semantico [Linea %d]: las expresiones comparadas deben ser cifras \n",linea_actual);
 															}
 														}
-														$$.codigo=" ";
+														char *var=temporal(), *codigo;
+														codigo="int ";
+														strcat(codigo, var);
+														strcat(codigo, ";\n");
+														strcat(codigo, $1.codigo);
+														strcat(codigo, $2.lexema);
+														strcat(codigo, $3.codigo);
+														$$.codigo=codigo;
 														}
 						|	expresion OP_IGUALDAD expresion {
 
@@ -548,7 +589,14 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 																	//	printf("ahora mismo son de tipo %s y %s \n",$1.tipo,$3.tipo);
 																	}
 																}
-																$$.codigo=" ";
+																char *var=temporal(), *codigo;
+																codigo="int ";
+																strcat(codigo, var);
+																strcat(codigo, ";\n");
+																strcat(codigo, $1.codigo);
+																strcat(codigo, $2.lexema);
+																strcat(codigo, $3.codigo);
+																$$.codigo=codigo;
 															}
 						|	expresion OP_MULT expresion {
 
@@ -563,7 +611,14 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 																		printf("Las dimensiones de las matrices no concuerdan \n");
 																}
 															}
-															$$.codigo=" ";
+															char *var=temporal(), *codigo;
+															codigo="int ";
+															strcat(codigo, var);
+															strcat(codigo, ";\n");
+															strcat(codigo, $1.codigo);
+															strcat(codigo, $2.lexema);
+															strcat(codigo, $3.codigo);
+															$$.codigo=codigo;
 														}
 						| 	expresion MASMENOS expresion {
 
@@ -578,7 +633,14 @@ expresion				:   PARENT_IZQ expresion PARENT_DER {$$.tipo = $2.tipo;}
 																	//printf("ahora mismo son de tipo %s y %s \n",$1.tipo,$3.tipo);
 																}
 															}
-															$$.codigo=" ";
+															char *var=temporal(), *codigo;
+															codigo="int ";
+															strcat(codigo, var);
+															strcat(codigo, ";\n");
+															strcat(codigo, $1.codigo);
+															strcat(codigo, $2.lexema);
+															strcat(codigo, $3.codigo);
+															$$.codigo=codigo;
 														 }
 						|	Array_exp
 						|	Agregados

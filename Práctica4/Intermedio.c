@@ -4,5 +4,6 @@ int main()
  	
 
 	printf( "Introduce numero : " ); 
-curr=2; 
+	printf( "%d==", n ); 
+	curr=2; 
 }

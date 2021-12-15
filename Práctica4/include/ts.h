@@ -2,6 +2,7 @@
 
 unsigned int TOPE=-1;
 unsigned int Subprog;
+unsigned int N=0;
 
 typedef enum TIPO {marca, procedimiento, variable, parametro_formal, funcion, var_asignada, llamada_proc, compr_ambito} tipoEntrada;
 
@@ -33,6 +34,14 @@ typedef struct
 
 #define YYSTYPE atributos
 
+char *temporal(){
+	char num = N + '0';
+	N=N+1;
+	char *ret;
+	strcpy(ret, "temp");
+	strcat(ret, num);
+	return ret;
+}
 
 int imprimir_var(entradaTS elem, FILE *fichero){
 	if(elem.dimensiones==0)

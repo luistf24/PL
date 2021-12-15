@@ -5,6 +5,8 @@ Principal
   endvar
 
   Salida "Introduce numero : ";
+  Entrada d;
+  Salida "%d==", n;
   curr=2;
 
 }

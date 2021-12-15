@@ -31,22 +31,22 @@ otros			.
 "mientras"           return MIENTRAS;
 "hacer"              return HACER;
 "hasta"              return HASTA;
-"="                  return OP_ASIG;
-"**"                 return OP_MULT;
-"*"                  return OP_MULT;
-"/"                  return OP_MULT;
-"<"                  return OP_REL;
-">"                  return OP_REL;
-">="                 return OP_REL;
-"<="                 return OP_REL;
-"=="                 return OP_IGUALDAD;
-"!="                 return OP_IGUALDAD;
-"&&"                 return OP_AND;
-"||"                 return OP_OR;
-"!"                  return OP_NOT;
-"xor"                return OP_XOR;
-"+"                  return MASMENOS;
-"-"                  return MASMENOS;
+"="                  {yylval.lexema= "="; return OP_ASIG;}
+"**"                 {yylval.lexema= "**"; return OP_MULT;}
+"*"                  {yylval.lexema= "*"; return OP_MULT;}
+"/"                  {yylval.lexema= "/"; return OP_MULT;}
+"<"                  {yylval.lexema= "<"; return OP_REL;}
+">"                  {yylval.lexema= ">"; return OP_REL;}
+">="                 {yylval.lexema= ">="; return OP_REL;}
+"<="                 {yylval.lexema= "<="; return OP_REL;}
+"=="                 {yylval.lexema= "=="; return OP_IGUALDAD;}
+"!="                 {yylval.lexema= "!="; return OP_IGUALDAD;}
+"&&"                 {yylval.lexema= "&&"; return OP_AND;}
+"||"                 {yylval.lexema= "||"; return OP_OR;}
+"!"                  {yylval.lexema= "!"; return OP_NOT;}
+"xor"                {yylval.lexema= "xor"; return OP_XOR;}
+"+"                  {yylval.lexema= "+"; return MASMENOS;}
+"-"                  {yylval.lexema= "-"; return MASMENOS;}
 "procedimiento"      return PROCEDIMIENTO;
 "int"                {yylval.tipo= entero; yylval.lexema="int"; return TIPO;}
 "double"             {yylval.tipo= real; yylval.lexema="double";  return TIPO;}
@@ -58,9 +58,9 @@ otros			.
 "Salida"             return SALIDA;
 {NATURAL}            {yylval.lexema= strdup(yytext); return NATURAL;}
 {REAL}               {yylval.lexema= strdup(yytext); return CONSTANTE;}
-{CARACTER}           return CONSTANTE;
-"verdadero"          return CONSTANTE;
-"falso"              return CONSTANTE;
+{CARACTER}           {yylval.lexema= strdup(yytext); return CONSTANTE;}
+"verdadero"          {yylval.lexema= strdup(yytext); return CONSTANTE;}
+"falso"              {yylval.lexema= strdup(yytext); return CONSTANTE;}
 {CADENA}             {yylval.lexema= strdup(yytext); return CADENA;}
 {ID}                 {yylval.lexema= strdup(yytext); return ID;}
 [\n]                 linea_actual++;
@@ -71,4 +71,3 @@ otros			.
    yyerror(buffer);
 }
 %%
-
